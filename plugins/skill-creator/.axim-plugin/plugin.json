@@ -1,0 +1,17 @@
+{
+  "name": "skill-creator",
+  "version": "1.0.0",
+  "description": "Create new AXIM skills — define knowledge modules that extend the agent's capabilities.",
+  "author": "GRRN",
+  "license": "MIT",
+  "repository": "https://github.com/GRRN-MAKER/Axim-plugins",
+  "axim": {
+    "minVersion": "1.0.0"
+  },
+  "capabilities": {
+    "skills": true,
+    "mcp": false,
+    "agents": false,
+    "scripts": false
+  }
+}

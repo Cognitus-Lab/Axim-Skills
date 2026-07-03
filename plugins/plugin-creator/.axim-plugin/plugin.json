@@ -1,0 +1,17 @@
+{
+  "name": "plugin-creator",
+  "version": "1.0.0",
+  "description": "Create AXIM plugins — bundles of skills, tools, MCP servers, and agents.",
+  "author": "GRRN",
+  "license": "MIT",
+  "repository": "https://github.com/GRRN-MAKER/Axim-plugins",
+  "axim": {
+    "minVersion": "1.0.0"
+  },
+  "capabilities": {
+    "skills": true,
+    "mcp": false,
+    "agents": false,
+    "scripts": false
+  }
+}
