@@ -29,6 +29,7 @@ Plugins are installed to `~/.axim/plugins/installed/` on the user's machine and 
 | [`axim-engine`](plugins/axim-engine/) | Engine tools — agents, callbacks, sessions, events, schemas | ✅ | — | — |
 | [`openmath-reasoning`](plugins/openmath-reasoning/) | Structured mathematical derivation, executable checks, and answer verification | ✅ | — | — |
 | [`opencode-reasoning`](plugins/opencode-reasoning/) | Specification-driven code generation, execution validation, critique, and repair | ✅ | — | — |
+| [`engineering-skill-library`](plugins/engineering-skill-library/) | Safe discovery, review, import, and Claude-compatible skill package integration | ✅ | — | — |
 
 ---
 
