@@ -2,7 +2,12 @@
 
 > Official plugin repository for [AXIM](https://grrn.io) — the dual-model AI agent desktop application.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+GRRN PROPRIETARY LICENSE
+AXIM Software and Associated Materials
+Version 1.0 — August 6, 2026
+
+Copyright © 2026 GRRN. All Rights Reserved.
+
 
 ---
 
