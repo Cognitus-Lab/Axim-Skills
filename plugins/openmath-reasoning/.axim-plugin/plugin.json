@@ -1,0 +1,10 @@
+{
+  "name": "openmath-reasoning",
+  "version": "1.0.0",
+  "description": "Structured mathematical reasoning with derivation, executable checks, and answer verification.",
+  "author": "GRRN",
+  "license": "MIT",
+  "repository": "https://github.com/GRRN-MAKER/Axim-Skills",
+  "axim": { "minVersion": "1.0.0" },
+  "capabilities": { "skills": true, "mcp": false, "agents": false, "scripts": false }
+}

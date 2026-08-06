@@ -27,6 +27,8 @@ Plugins are installed to `~/.axim/plugins/installed/` on the user's machine and 
 | [`skill-installer`](plugins/skill-installer/) | Install, uninstall, and manage AXIM skills | ✅ | — | — |
 | [`plugin-creator`](plugins/plugin-creator/) | Create new AXIM plugins with manifest and structure | ✅ | — | — |
 | [`axim-engine`](plugins/axim-engine/) | Engine tools — agents, callbacks, sessions, events, schemas | ✅ | — | — |
+| [`openmath-reasoning`](plugins/openmath-reasoning/) | Structured mathematical derivation, executable checks, and answer verification | ✅ | — | — |
+| [`opencode-reasoning`](plugins/opencode-reasoning/) | Specification-driven code generation, execution validation, critique, and repair | ✅ | — | — |
 
 ---
 
