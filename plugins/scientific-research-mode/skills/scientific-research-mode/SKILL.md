@@ -12,6 +12,11 @@ keywords:
   - scientific manuscript
   - data analysis
   - peer review
+  - research operations
+  - UX research
+  - usability testing
+  - product specification
+  - SUS UEQ NASA-TLX
 ---
 
 # Scientific Research Mode
@@ -110,6 +115,70 @@ For every important claim or result, record:
 - Parameters, version, seed, timestamp, and artifact digest.
 - Known limitations and reviewer decision.
 
+## Research Repository Operations
+
+Treat the research repository as a governed system of record, not a file dump:
+
+- Assign each question, protocol, evidence item, dataset, artifact, review, insight, decision, and action a stable identifier.
+- Maintain lineage from source → claim → analysis → finding → product/scientific decision.
+- Store owner, access scope, consent basis, retention period, sensitivity, license, verification state, and revision history.
+- Use a controlled taxonomy for method, population, modality, domain, study status, evidence strength, and confidence.
+- Deduplicate before reuse and preserve superseded versions rather than silently overwriting them.
+- Separate raw restricted data from shareable findings and redact PII before broader access.
+- Require explicit governance for consent, privacy, ethics, deletion, and reuse across teams or purposes.
+- Make repository search return context, provenance, freshness, and limitations—not isolated quotations.
+
+## UX And Human-Computer Interaction Research
+
+Select methods from the decision being made:
+
+- Use generative research to discover needs, workflows, motivations, mental models, constraints, and problem structure.
+- Use evaluative research to assess an existing concept or implementation through usability tests, A/B tests, tree tests, card sorting, accessibility studies, or telemetry.
+- Define target participants, exclusions, recruitment channel, sample rationale, tasks, scenarios, success criteria, moderator script, consent, and data-handling plan before sessions.
+- Keep observation, participant quotation, interpretation, severity, recommendation, and product decision as separate fields.
+- Triangulate self-report, observed behavior, task outcomes, telemetry, and system performance when available.
+- Report accessibility barriers and assistive-technology context explicitly rather than averaging them away.
+
+### UX Instruments And Metrics
+
+- SUS: score using the published instrument procedure; report sample size and score uncertainty. Do not reinterpret individual items as standalone validated scales.
+- UEQ: preserve the instrument's scale structure and benchmark assumptions; report dimensions rather than only one aggregate.
+- NASA-TLX: declare whether raw or weighted scoring is used and do not mix scoring variants in one comparison.
+- Pair subjective instruments with task success, completion time, error/recovery count, abandonment, assistance, and accessibility outcomes.
+- Predefine primary UX outcomes and distinguish formative findings from confirmatory hypothesis tests.
+- Treat synthetic UX datasets as pipeline/teaching fixtures only. Never use synthetic observations to infer actual user behavior or product quality.
+
+## Asynchronous UX Peer Review
+
+Before execution, peer-review participant screeners, research plans, scripts, surveys, card sorts, and task materials. Before publication, peer-review the final report.
+
+- Reviewer comments must identify artifact revision, location, severity, rationale, and suggested resolution.
+- Authors own the final decision but must record accepted, rejected, and deferred suggestions with rationale.
+- Block execution for unresolved consent, privacy, safety, recruitment-bias, leading-question, or invalid-measure issues.
+- Block publication for unsupported claims, missing limitations, broken evidence links, or conclusions broader than the participants/tasks.
+- Summaries should include a short purpose statement, 3–4 high-level insights, links to plan/report/evidence, and actionable next steps with owners.
+
+## Product Management And Product-Spec Validation
+
+Connect research to a versioned product decision artifact:
+
+- Require problem, target user, evidence, desired outcome, non-goals, scope, user journey, requirements, constraints, risks, instrumentation, launch criteria, rollback, and unresolved questions.
+- Keep a spec format version and positive revision number.
+- Reject missing mandatory sections, duplicate section identifiers, unsupported artifact types, and invalid section order.
+- Warn—but do not necessarily fail—on empty or implausibly short required sections; a human must resolve warnings before approval.
+- Trace every material requirement to research evidence or an explicitly labeled assumption.
+- Define falsifiable success and guardrail metrics before implementation.
+- Validate desirability, usability, feasibility, viability, safety, privacy, accessibility, and operational support separately.
+- After evidence changes, revise the specification rather than rewriting history; preserve decision logs and superseded revisions.
+
+## Research-to-Product Handoff
+
+- Translate findings into opportunities before jumping to features.
+- Rank insights by evidence strength, frequency, severity, strategic relevance, and uncertainty.
+- Give each action an owner, due date, success signal, dependency, and evidence link.
+- Record when product constraints override research recommendations and why.
+- Re-evaluate after launch with the same operational definitions used at baseline.
+
 ## Safety Boundary
 
 This mode provides research assistance, not autonomous scientific authority. Medical, clinical, biological, chemical, environmental, and other safety-critical conclusions require qualified domain review, applicable ethics approval, and compliance with law and institutional policy.
@@ -117,3 +186,13 @@ This mode provides research assistance, not autonomous scientific authority. Med
 ## Architectural Attribution
 
 AXIM's implementation is original. Its workbench concepts are informed by open-science practice and the public Apache-2.0 OpenScience architecture at https://github.com/synthetic-sciences/openscience, including staged research, specialist critique, artifacts, provenance, and publication workflows. No OpenScience source code or bundled skill text is included here.
+
+Additional public methodological references informing this original AXIM guidance:
+
+- ResearchOps Community Research Repositories Project: https://github.com/researchops/research_repositories — repository taxonomy, governance, privacy, ethics, reuse, and research/data/governance workstreams.
+- JupyterLab UX Research: https://github.com/jupyterlab/ux-research — centralized research assets and inclusive asynchronous peer review of screeners, plans, materials, and reports.
+- Mohsen Rafiei UX Datasets Collection: https://github.com/mohsen-rafiei/UX_datasets — synthetic UX/HCI datasets using SUS, UEQ, NASA-TLX, telemetry, accessibility, cognitive, and mixed methods; reference fixtures only, subject to its own non-commercial/attribution terms.
+- Sourcegraph UX Research Handbook (archived): https://github.com/sourcegraph/handbook/blob/main/content/departments/product/design/research/index.md — generative/evaluative method classification and research-repository practice.
+- ProductSpec validation guidance: https://github.com/gokulrajaram/ProductSpec/blob/main/docs/validate-your-first-product-spec.md — versioned specification structure, mandatory-section/order validation, duplicate rejection, and errors-versus-warnings.
+
+These sources are attributed references. AXIM does not bundle or reproduce their templates, datasets, source code, or proprietary content.
