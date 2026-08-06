@@ -1,6 +1,6 @@
 # AXIM Plugins
 
-> Official plugin repository for [AXIM](https://grrn.io) — the dual-model AI agent desktop application.
+> Official plugin repository for [AXIM](https://cognitus.grrn.io) — the dual-model AI agent desktop application.
 
 GRRN PROPRIETARY LICENSE
 AXIM Software and Associated Materials
