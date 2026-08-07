@@ -17,6 +17,10 @@ keywords:
   - research governance
   - consent governance
   - research taxonomy
+  - governance
+  - taxonomy
+  - consent
+  - PII GDPR ethics
   - UX research
   - usability testing
   - product specification
