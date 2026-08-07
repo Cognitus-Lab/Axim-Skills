@@ -13,6 +13,10 @@ keywords:
   - data analysis
   - peer review
   - research operations
+  - research repository
+  - research governance
+  - consent governance
+  - research taxonomy
   - UX research
   - usability testing
   - product specification
