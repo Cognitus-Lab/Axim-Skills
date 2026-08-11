@@ -1,0 +1,17 @@
+{
+  "name": "axim-engine",
+  "version": "1.0.0",
+  "description": "AXIM Engine tools — manage agents, callbacks, sessions, events, and tool schemas.",
+  "author": "GRRN",
+  "license": "MIT",
+  "repository": "https://github.com/GRRN-MAKER/Axim-plugins",
+  "axim": {
+    "minVersion": "1.0.0"
+  },
+  "capabilities": {
+    "skills": true,
+    "mcp": false,
+    "agents": true,
+    "scripts": false
+  }
+}

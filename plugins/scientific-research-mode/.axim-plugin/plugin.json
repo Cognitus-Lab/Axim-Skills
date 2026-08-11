@@ -1,0 +1,10 @@
+{
+  "name": "scientific-research-mode",
+  "version": "1.0.0",
+  "description": "Rigorous end-to-end scientific research sessions with evidence, experiments, critique, provenance, and publication gates.",
+  "author": "GRRN",
+  "license": "MIT",
+  "repository": "https://github.com/GRRN-MAKER/Axim-Skills",
+  "axim": { "minVersion": "1.0.0" },
+  "capabilities": { "skills": true, "mcp": false, "agents": false, "scripts": false }
+}

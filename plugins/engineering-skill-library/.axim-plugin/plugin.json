@@ -1,0 +1,10 @@
+{
+  "name": "engineering-skill-library",
+  "version": "1.0.0",
+  "description": "Safely discover, review, import, and apply external engineering Agent Skills in AXIM.",
+  "author": "GRRN",
+  "license": "MIT",
+  "repository": "https://github.com/GRRN-MAKER/Axim-Skills",
+  "axim": { "minVersion": "1.0.0" },
+  "capabilities": { "skills": true, "mcp": false, "agents": false, "scripts": false }
+}

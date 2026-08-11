@@ -1,0 +1,10 @@
+{
+  "name": "opencode-reasoning",
+  "version": "1.0.0",
+  "description": "Specification-driven code generation, execution-based validation, critique, and repair.",
+  "author": "GRRN",
+  "license": "MIT",
+  "repository": "https://github.com/GRRN-MAKER/Axim-Skills",
+  "axim": { "minVersion": "1.0.0" },
+  "capabilities": { "skills": true, "mcp": false, "agents": false, "scripts": false }
+}

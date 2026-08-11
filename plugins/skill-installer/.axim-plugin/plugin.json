@@ -1,0 +1,17 @@
+{
+  "name": "skill-installer",
+  "version": "1.0.0",
+  "description": "Install, uninstall, and manage AXIM skills from local paths or repositories.",
+  "author": "GRRN",
+  "license": "MIT",
+  "repository": "https://github.com/GRRN-MAKER/Axim-plugins",
+  "axim": {
+    "minVersion": "1.0.0"
+  },
+  "capabilities": {
+    "skills": true,
+    "mcp": false,
+    "agents": false,
+    "scripts": false
+  }
+}
