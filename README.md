@@ -161,7 +161,6 @@ For detailed guidance on using, developing, and securing AXIM plugins, see:
 
 ---
 
->>>>>>> 1bd638ca872573f29945b837bd36cfbaf6b7a369
 ## Architecture
 
 ### How Plugins Load
