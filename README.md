@@ -241,4 +241,4 @@ MIT — see [LICENSE](LICENSE) for details.
 
 ---
 
-Built with 🖤 by [GRRN](https://grrn.io)
+Built with 🖤 by [Cognitus](https://cognitus.grrn.io)
