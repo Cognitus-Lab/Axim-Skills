@@ -1,0 +1,17 @@
+{
+  "name": "terminal-mac",
+  "version": "1.0.0",
+  "description": "Isolated macOS guest virtual machine with screen capture, keyboard and pointer automation, and MCP tools.",
+  "author": "Cognitus",
+  "license": "MIT",
+  "repository": "https://github.com/Cognitus-Lab/Axim-Skills",
+  "axim": {
+    "minVersion": "1.0.0"
+  },
+  "capabilities": {
+    "skills": true,
+    "mcp": true,
+    "agents": false,
+    "scripts": true
+  }
+}
