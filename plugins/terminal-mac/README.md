@@ -1,4 +1,4 @@
-# terminal-mac
+# mac-skills
 
 An isolated macOS guest desktop for computer-use agents, viewed and controlled from a terminal or through AXIM agent tools.
 
