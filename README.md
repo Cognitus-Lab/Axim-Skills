@@ -36,6 +36,9 @@ Plugins are installed to `~/.axim/plugins/installed/` on the user's machine and 
 | [`opencode-reasoning`](plugins/opencode-reasoning/) | Specification-driven code generation, execution validation, critique, and repair | ✅ | — | — |
 | [`engineering-skill-library`](plugins/engineering-skill-library/) | Safe discovery, review, import, and Claude-compatible skill package integration | ✅ | — | — |
 | [`scientific-research-mode`](plugins/scientific-research-mode/) | Evidence-gated scientific research sessions from question through publication | ✅ | — | — |
+| [`terminal-mac`](plugins/terminal-mac/) | Isolated macOS guest VM with screen capture, keyboard/pointer automation, and MCP tools | ✅ | ✅ | — |
+| [`github`](plugins/github/) | Native GitHub integration: inspect repos, search code, manage issues, and PR workflows | ✅ | ✅ | — |
+| [`helix-foundry`](plugins/helix-foundry/) | Enterprise ontology engine & knowledge graph connector platform with Analyst querying | ✅ | ✅ | — |
 
 ---
 

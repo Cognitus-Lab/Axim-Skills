@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "helix-foundry": {
+      "command": "python3",
+      "args": ["mcp_server.py"],
+      "env": {
+        "FOUNDRY_ORIGIN": "http://localhost:3000",
+        "HELIX_WFE_ORIGIN": "http://127.0.0.1:8081"
+      }
+    }
+  }
+}

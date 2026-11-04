@@ -1,0 +1,25 @@
+node_modules
+.next
+.next-*
+next-env.d.ts
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+coverage
+playwright-report
+test-results
+docs-media
+*.log
+.DS_Store
+# mkcert certificates for `pnpm dev`
+*.pem
+# Amazon's public RDS roots, which the sample's connector trusts.
+!public/samples/rds-ca.pem
+coverage
+# pdf.js run-time files, copied on install (scripts/pdfjs-assets.mjs)
+/public/pdfjs
+# Go test binaries (backend/)
+*.test
+# Go build output (backend/)
+/backend/bin/
