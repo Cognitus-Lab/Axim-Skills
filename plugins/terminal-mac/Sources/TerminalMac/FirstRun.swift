@@ -103,6 +103,7 @@ extension CLI {
     }
 
     private func cachedRestoreImage() async throws -> URL {
+#if arch(arm64)
         let cache = store.root.appendingPathComponent("cache", isDirectory: true)
         try FileManager.default.createDirectory(at: cache, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
         let lock = try FileLock(cache.appendingPathComponent("download.lock"))
@@ -125,5 +126,8 @@ extension CLI {
         let verified = try await VZMacOSRestoreImage.image(from: result)
         guard verified.buildVersion == image.buildVersion, verified.mostFeaturefulSupportedConfiguration != nil else { throw Failure("Downloaded restore image is not compatible with this Mac") }
         return result
+#else
+        throw Failure("macOS guest restore images are only supported on Apple silicon (arm64).")
+#endif
     }
 }
