@@ -42,6 +42,43 @@ Plugins are installed to `~/.axim/plugins/installed/` on the user's machine and 
 
 ---
 
+## Available Skills (`skills/`)
+
+All skills are available directly under `skills/<skill-name>/` for direct agent inclusion, as well as packaged in `plugins/`:
+
+| Skill | Category | Description |
+|-------|----------|-------------|
+| [`helix-foundry`](skills/helix-foundry/) | Graph & Ontology | Connect databases, SaaS tools, and documents into unified knowledge graphs |
+| [`helix-foundry-onboarding`](skills/helix-foundry-onboarding/) | Graph & Ontology | End-to-end ontology setup wizard with schema generation and verification |
+| [`helix-foundry-mcp`](skills/helix-foundry-mcp/) | Graph & Ontology | MCP read tools, job states, and graph inspection for Helix Foundry |
+| [`helix-foundry-actions-mcp`](skills/helix-foundry-actions-mcp/) | Graph & Ontology | MCP action mutations and configuration operations |
+| [`helix-memory-system`](skills/helix-memory-system/) | Agent Memory | Durable per-tenant agent memory combining graph relationships, vector similarity, and BM25 |
+| [`helix-cli`](skills/helix-cli/) | Tools & CLI | HelixDB command-line tool operations and schema migrations |
+| [`helix-admin-mcp`](skills/helix-admin-mcp/) | Database Admin | Tenant provisioning, authentication, and database backups |
+| [`helix-mcp`](skills/helix-mcp/) | Database MCP | Direct graph queries, mutations, and traversals over MCP |
+| [`helix-query-mcp`](skills/helix-query-mcp/) | Query Tools | Execute HQL queries and inspect query execution trees |
+| [`helix-query-from-hql`](skills/helix-query-from-hql/) | Query Languages | Write, test, and optimize native Helix Query Language (HQL) queries |
+| [`helix-query-from-cypher`](skills/helix-query-from-cypher/) | Query Languages | Translate Neo4j Cypher queries into native Helix queries |
+| [`helix-query-from-gremlin`](skills/helix-query-from-gremlin/) | Query Languages | Translate Apache TinkerPop Gremlin traversals into Helix queries |
+| [`helix-query-optimize`](skills/helix-query-optimize/) | Performance | Query planning, indexing strategies, and execution optimization |
+| [`helix-query-python`](skills/helix-query-python/) | Client SDKs | Python SDK integration and streaming graph client |
+| [`helix-query-typescript`](skills/helix-query-typescript/) | Client SDKs | TypeScript/Node SDK integration and typed graph queries |
+| [`helix-query-rust`](skills/helix-query-rust/) | Client SDKs | High-performance Rust SDK and native bindings |
+| [`helix-query-go`](skills/helix-query-go/) | Client SDKs | Go client SDK for concurrent graph querying |
+| [`helix-query-json-dynamic`](skills/helix-query-json-dynamic/) | Dynamic Queries | Construct and execute dynamic JSON graph queries |
+| [`github`](skills/github/) | Developer Tools | Native GitHub repo inspection, code search, issue & PR management |
+| [`terminal-mac`](skills/terminal-mac/) | Computer Use | Isolated macOS guest VM automation, screen capture, and key/pointer events |
+| [`openmath-reasoning`](skills/openmath-reasoning/) | Mathematics | Structured mathematical derivation, executable checks, and verification |
+| [`opencode-reasoning`](skills/opencode-reasoning/) | Coding | Specification-driven code generation and execution validation |
+| [`engineering-skill-library`](skills/engineering-skill-library/) | Engineering | Safe discovery and import of external engineering agent skills |
+| [`scientific-research-mode`](skills/scientific-research-mode/) | Research | Evidence-gated research sessions from hypothesis through publication |
+| [`skill-creator`](skills/skill-creator/) | Skill Tools | Author and format new AXIM agent skills |
+| [`skill-installer`](skills/skill-installer/) | Skill Tools | Install and manage skills across directories |
+| [`plugin-creator`](skills/plugin-creator/) | Plugin Tools | Package skills, MCP servers, and tools into AXIM plugins |
+| [`engine-tools`](skills/engine-tools/) | AXIM Engine | Native engine tools for agent registry, sessions, and events |
+
+---
+
 ## Installation
 
 ### From the AXIM App
