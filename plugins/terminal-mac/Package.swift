@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "terminal-mac",
-    platforms: [.macOS(.v15)],
+    platforms: [.macOS(.v14)],
     products: [.executable(name: "terminal-mac", targets: ["TerminalMac"])],
     targets: [
         .target(name: "TerminalMacCore"),
