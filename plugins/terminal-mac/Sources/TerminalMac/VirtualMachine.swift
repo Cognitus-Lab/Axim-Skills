@@ -6,6 +6,7 @@ import Darwin
 @MainActor
 enum VirtualMachines {
     static func configuration(_ machine: Machine, at directory: URL, tools: URL?) throws -> VZVirtualMachineConfiguration {
+#if arch(arm64)
         let config = VZVirtualMachineConfiguration()
         config.bootLoader = VZMacOSBootLoader()
         config.cpuCount = machine.cpu
@@ -41,9 +42,13 @@ enum VirtualMachines {
         config.directorySharingDevices = [filesystem]
         try config.validate()
         return config
+#else
+        throw Failure("macOS guest virtualization requires Apple silicon (arm64).")
+#endif
     }
 
     static func create(_ args: Arguments, store: Store, retryIncomplete: Bool = false) async throws {
+#if arch(arm64)
         guard VZVirtualMachine.isSupported else { throw Failure("Virtualization is unavailable. Use an Apple silicon Mac and the signed build.") }
         let name = try args.machineName()
         guard let ipsw = args.options["ipsw"] else { throw Failure("Provide --ipsw /path/to/restore.ipsw. Use terminal-mac image to find an Apple restore image.") }
@@ -81,8 +86,12 @@ enum VirtualMachines {
         try file.close()
         try store.save(machine)
         try await install(machine, at: directory, imageURL: imageURL, store: store)
+#else
+        throw Failure("macOS guest virtualization requires Apple silicon (arm64).")
+#endif
     }
     private static func install(_ original: Machine, at directory: URL, imageURL: URL, store: Store) async throws {
+#if arch(arm64)
         var machine = original
         let vm = VZVirtualMachine(configuration: try configuration(machine, at: directory, tools: nil))
         let installer = VZMacOSInstaller(virtualMachine: vm, restoringFromImageAt: imageURL)
@@ -95,6 +104,9 @@ enum VirtualMachines {
         machine.installed = true
         try store.save(machine)
         stderr("macOS is installed in '\(machine.name)'.")
+#else
+        throw Failure("macOS guest virtualization requires Apple silicon (arm64).")
+#endif
     }
 }
 

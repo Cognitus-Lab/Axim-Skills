@@ -29,6 +29,7 @@ final class CLI {
                            "macOS": ProcessInfo.processInfo.operatingSystemVersionString, "dataDirectory": store.root.path,
                            "guestToolsBundled": String(FileManager.default.fileExists(atPath: toolsURL.appendingPathComponent("TerminalMacGuest.app").path))])
         case "image":
+#if arch(arm64)
             let args = try Arguments(tail, options: ["output"])
             guard args.positionals.isEmpty else { throw Failure("Usage: terminal-mac image [--output /path/to/restore.ipsw]") }
             let image = try await VZMacOSRestoreImage.latestSupported
@@ -44,6 +45,9 @@ final class CLI {
             guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw Failure("Apple restore-image download failed") }
             try FileManager.default.moveItem(at: temporary, to: destination)
             print(destination.path)
+#else
+            throw Failure("macOS guest restore images are only supported on Apple silicon (arm64).")
+#endif
         case "create":
             let args = try Arguments(tail, flags: ["offline", "standard"], options: ["ipsw", "cpus", "memory", "disk", "width", "height"])
             try await VirtualMachines.create(args, store: store)

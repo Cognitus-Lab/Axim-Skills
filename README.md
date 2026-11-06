@@ -39,6 +39,7 @@ Plugins are installed to `~/.axim/plugins/installed/` on the user's machine and 
 | [`terminal-mac`](plugins/terminal-mac/) | Isolated macOS guest VM with screen capture, keyboard/pointer automation, and MCP tools | ✅ | ✅ | — |
 | [`github`](plugins/github/) | Native GitHub integration: inspect repos, search code, manage issues, and PR workflows | ✅ | ✅ | — |
 | [`helix-foundry`](plugins/helix-foundry/) | Enterprise ontology engine & knowledge graph connector platform with Analyst querying | ✅ | ✅ | — |
+| [`sql`](plugins/sql/) | Local & remote SQL database manager: store, query, and retrieve datasets via SQLite, Postgres, MySQL | ✅ | ✅ | — |
 
 ---
 
@@ -48,6 +49,7 @@ All skills are available directly under `skills/<skill-name>/` for direct agent 
 
 | Skill | Category | Description |
 |-------|----------|-------------|
+| [`sql`](skills/sql/) | Database & SQL | Store, query, and retrieve datasets with SQLite/Postgres/MySQL, CSV import, and data export |
 | [`helix-foundry`](skills/helix-foundry/) | Graph & Ontology | Connect databases, SaaS tools, and documents into unified knowledge graphs |
 | [`helix-foundry-onboarding`](skills/helix-foundry-onboarding/) | Graph & Ontology | End-to-end ontology setup wizard with schema generation and verification |
 | [`helix-foundry-mcp`](skills/helix-foundry-mcp/) | Graph & Ontology | MCP read tools, job states, and graph inspection for Helix Foundry |

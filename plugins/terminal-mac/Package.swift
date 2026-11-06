@@ -14,5 +14,5 @@ let package = Package(
                              .linkedFramework("ScreenCaptureKit"), .linkedFramework("ApplicationServices"), .linkedFramework("ServiceManagement"), .linkedFramework("CoreMedia")]),
         .testTarget(name: "TerminalMacCoreTests", dependencies: ["TerminalMacCore"])
     ],
-    swiftLanguageVersions: [.v5]
+    swiftLanguageModes: [.v5]
 )

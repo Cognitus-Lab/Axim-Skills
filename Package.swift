@@ -1,9 +1,9 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.0
 import PackageDescription
 
 let package = Package(
     name: "AximSkills",
-    platforms: [.macOS(.v14)],
+    platforms: [.macOS(.v15)],
     products: [
         .executable(name: "terminal-mac", targets: ["TerminalMac"])
     ],
@@ -40,5 +40,5 @@ let package = Package(
             path: "plugins/terminal-mac/Tests/TerminalMacCoreTests"
         )
     ],
-    swiftLanguageVersions: [.v5]
+    swiftLanguageModes: [.v5]
 )
