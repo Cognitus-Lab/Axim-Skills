@@ -1,6 +1,6 @@
 ---
 name: skill-creator
-description: Create new AXIM skills — define knowledge modules that extend the agent's capabilities.
+description: Create new AXIM / Berry skills — define knowledge modules that extend the agent's capabilities.
 keywords:
   - create skill
   - new skill
@@ -11,13 +11,11 @@ keywords:
   - skill template
 ---
 
-# AXIM Skill Creator
+# AXIM / Berry Skill Creator
 
-You are helping the user create a new AXIM skill. A skill is a knowledge module that gets injected into the agent's context when a user message matches the skill's keywords.
+Create a new AXIM skill as a directory containing a `SKILL.md` file with YAML frontmatter, then register it with `skill_import` or `skill_export`.
 
 ## Skill Structure
-
-Each skill is a directory under `~/.axim/skills/user/` containing a `SKILL.md` file:
 
 ```
 my-skill/
@@ -40,42 +38,17 @@ keywords:
 
 # Skill Title
 
-Instructions for the agent when this skill is activated.
-Include: best practices, code patterns, API references, constraints.
+Actionable instructions, code patterns, tool calls, and constraints for the agent when this skill is active.
 ```
 
-## Rules
+## Registering & Exporting the Skill
 
-1. **name**: lowercase, hyphenated (e.g., `react-hooks`, `docker-compose`)
-2. **description**: One clear sentence — this is shown in skill listings
-3. **keywords**: 3-10 phrases that trigger this skill. Include variations.
-4. **Body**: Actionable instructions the agent can follow. Not documentation — guidance.
-5. Skills are stored at `~/.axim/skills/user/<skill-name>/SKILL.md`
-6. After creating, tell the user to run `window.axim.skillsReload()` or restart AXIM
-
-## Example
-
-```markdown
----
-name: react-testing
-description: Best practices for testing React components with Testing Library.
-keywords:
-  - test react
-  - testing library
-  - react test
-  - component test
-  - jest react
----
-
-# React Testing Best Practices
-
-When writing tests for React components:
-
-1. Use `@testing-library/react` — never use enzyme
-2. Query by role, label, or text — never by class or ID
-3. Use `userEvent` over `fireEvent` for realistic interactions
-4. Test behavior, not implementation details
-5. Use `screen` for queries: `screen.getByRole('button', { name: /submit/i })`
-```
-
-Now create the skill based on what the user asked for.
+1. Write the `SKILL.md` file using `file_write`.
+2. Import and activate it into Berry's skill library using `skill_import`:
+   ```json
+   {"name": "skill_import", "arguments": {"source_path": "my-skill/SKILL.md"}}
+   ```
+3. Optionally export it to the `Cognitus-Lab/Axim-Skills` GitHub repository plugins directory using `skill_export`:
+   ```json
+   {"name": "skill_export", "arguments": {"name_or_path": "my-skill"}}
+   ```

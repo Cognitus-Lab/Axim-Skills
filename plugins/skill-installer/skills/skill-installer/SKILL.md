@@ -1,8 +1,9 @@
 ---
 name: skill-installer
-description: Install, uninstall, and manage AXIM skills from local paths or repositories.
+description: Install, import, export, and manage AXIM / Berry skills and plugins from local paths or Cognitus-Lab/Axim-Skills.
 keywords:
   - install skill
+  - install all skills
   - uninstall skill
   - remove skill
   - list skills
@@ -11,46 +12,46 @@ keywords:
   - show skills
 ---
 
-# AXIM Skill Installer
+# AXIM / Berry Skill Installer
 
-You are helping the user manage their AXIM skills.
+Use the native Berry / AXIM skill and plugin tools to list, install, import, activate, or export skills.
 
-## Commands
+## Native Agent Tools
 
-### List installed skills
-Show all skills from both system and user directories:
-- System: `~/.axim/skills/.system/` (built-in, not removable)
-- User: `~/.axim/skills/user/` (user-installed, removable)
-
-Use `window.axim.skillsList()` to get the full list.
-
-### Install a skill
-To install a skill from a local directory:
-```js
-window.axim.skillsInstall('/path/to/skill-directory')
+### 1. Install all skills (or a specific skill/plugin)
+```json
+{"name": "skill_install", "arguments": {"target": "all"}}
 ```
 
-The directory must contain a `SKILL.md` file with valid frontmatter.
-
-### Uninstall a skill
-```js
-window.axim.skillsUninstall('skill-name')
+### 2. List installed plugins and skills
+```json
+{"name": "plugin_list", "arguments": {}}
 ```
 
-Only user-installed skills can be uninstalled. System skills are protected.
-
-### Reload skills
-After manually editing skill files:
-```js
-window.axim.skillsReload()
+### 3. Search skills by keyword
+```json
+{"name": "skill_search", "arguments": {"query": "sql"}}
 ```
 
-## Skill Locations
-- **System skills**: `~/.axim/skills/.system/` — shipped with AXIM
-- **User skills**: `~/.axim/skills/user/` — installed by the user
-- **Plugin skills**: `~/.axim/plugins/installed/<plugin>/skills/` — bundled with plugins
+### 4. Activate / read a skill's instructions
+```json
+{"name": "skill_use", "arguments": {"name": "sql"}}
+```
 
-## Troubleshooting
-- **Skill not matching**: Check that keywords in SKILL.md frontmatter match user queries
-- **Skill not loading**: Ensure SKILL.md has valid YAML frontmatter between `---` markers
-- **Skill too large**: Keep SKILL.md under 5000 characters for fast injection
+### 5. Import a skill or plugin from a local directory or SKILL.md
+```json
+{"name": "skill_import", "arguments": {"source_path": "/path/to/skill-directory"}}
+```
+
+### 6. Export skills or plugins into Cognitus-Lab/Axim-Skills
+```json
+{"name": "skill_export", "arguments": {"name_or_path": "all"}}
+```
+
+## Interactive Slash Commands
+- `/skills` or `/skills list` — List all loaded skills
+- `/skills use <name>` — Pin and activate a skill
+- `/skills install [all|<path>]` — Install all or specific skills
+- `/skills import <path>` — Import a skill or plugin directory
+- `/skills export [name_or_path]` — Export skills to the GitHub skills repo
+- `/plugins` — List, use, install, import, or export plugins
