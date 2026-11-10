@@ -1,0 +1,18 @@
+{
+  "name": "task-engine",
+  "version": "1.0.0",
+  "description": "Portable workstation task & activity telemetry engine (Nuuk Engine) that passively scopes PC usage into streamable ML/AI-ready JSONL/CSV datasets via MCP tools.",
+  "author": "GRRN",
+  "license": "MIT",
+  "repository": "https://github.com/Cognitus-Lab/Axim-Skills",
+  "axim": {
+    "minVersion": "1.0.0"
+  },
+  "capabilities": {
+    "tools": true,
+    "skills": true,
+    "mcp": true,
+    "agents": false,
+    "scripts": true
+  }
+}
