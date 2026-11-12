@@ -64,7 +64,9 @@ describe("engine-shaped rule evidence", () => {
       expect(html).toContain(verdict);
       expect(html).toContain("&lt;b&gt;Untrusted source text&lt;/b&gt;");
       expect(html).toContain("&lt;script&gt;");
-      expect(html).not.toMatch(/<script|<img|<b>/);
+      expect(html).not.toContain("<script");
+      expect(html).not.toContain("<img");
+      expect(html).not.toContain("<b>");
     },
   );
 
@@ -126,7 +128,9 @@ it.each(["revised", "refused"] as const)(
     expect(html).toContain("constraint.check");
     expect(html).toContain("load");
     expect(html).toContain("&lt;script&gt;untrusted&lt;/script&gt;");
-    expect(html).not.toMatch(/<script|<img|<b>/);
+    expect(html).not.toContain("<script");
+    expect(html).not.toContain("<img");
+    expect(html).not.toContain("<b>");
   },
 );
 

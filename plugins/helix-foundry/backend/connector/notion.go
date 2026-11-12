@@ -5,6 +5,8 @@ import (
 	"cmp"
 	"container/heap"
 	"context"
+	"crypto/hmac"
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/binary"
 	"encoding/hex"
@@ -944,6 +946,24 @@ type notionListing struct {
 // so a data source unshared meanwhile isn't queried.
 const notionListingFresh = time.Minute
 
+var (
+	notionKeySaltOnce sync.Once
+	notionKeySalt     [32]byte
+)
+
+func hashNotionSecret(secret string) [sha256.Size]byte {
+	notionKeySaltOnce.Do(func() {
+		if _, err := rand.Read(notionKeySalt[:]); err != nil {
+			copy(notionKeySalt[:], "helix-foundry-notion-secret-salt")
+		}
+	})
+	h := hmac.New(sha256.New, notionKeySalt[:])
+	h.Write([]byte(secret))
+	var out [sha256.Size]byte
+	copy(out[:], h.Sum(nil))
+	return out
+}
+
 // remember keeps what a sync's Discover listed for the connector, and
 // forgets the listings no read may use any longer.
 func (k *notionKind) remember(connectorID, secret string, listed []notionListed) {
@@ -954,7 +974,7 @@ func (k *notionKind) remember(connectorID, secret string, listed []notionListed)
 	if k.listings == nil {
 		k.listings = map[string]notionListing{}
 	}
-	k.listings[connectorID] = notionListing{secret: sha256.Sum256([]byte(secret)), at: now, listed: listed}
+	k.listings[connectorID] = notionListing{secret: hashNotionSecret(secret), at: now, listed: listed}
 }
 
 // listed is the data sources a sync of src reads: those its Discover
@@ -964,7 +984,7 @@ func (k *notionKind) listed(ctx context.Context, c *notionClient, src Source) ([
 		k.mu.Lock()
 		l, ok := k.listings[src.ConnectorID]
 		k.mu.Unlock()
-		if ok && l.secret == sha256.Sum256([]byte(c.secret)) && time.Since(l.at) < notionListingFresh {
+		if ok && l.secret == hashNotionSecret(c.secret) && time.Since(l.at) < notionListingFresh {
 			return slices.Clone(l.listed), nil
 		}
 	}

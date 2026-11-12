@@ -2004,7 +2004,12 @@ function prepareS3(
         "enter the HTTPS address of your S3-compatible storage, without a path",
       );
     const host = url.hostname.toLowerCase();
-    if (host.endsWith("amazonaws.com") || host.endsWith("amazonaws.com.cn"))
+    if (
+      host === "amazonaws.com" ||
+      host.endsWith(".amazonaws.com") ||
+      host === "amazonaws.com.cn" ||
+      host.endsWith(".amazonaws.com.cn")
+    )
       return invalid("for AWS, leave the endpoint empty");
     if (host === "helix-db.com" || host.endsWith(".helix-db.com"))
       return invalid(M9);

@@ -123,7 +123,7 @@ async function chooseOllama(page: Page, confirm: boolean) {
     page
       .getByRole("group", { name: "Model", exact: true })
       .getByRole("combobox", { name: "Model" }),
-    new RegExp(`^${ollama.replace(/[.:]/g, "\\$&")} · `),
+    new RegExp(`^${ollama.replace(/[.*+?^${}()|[\]\\-]/g, "\\$&")} · `),
   );
   await page.getByRole("button", { name: "Test and save" }).click();
   if (confirm)

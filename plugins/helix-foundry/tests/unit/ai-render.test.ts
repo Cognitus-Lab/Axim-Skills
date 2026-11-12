@@ -313,7 +313,7 @@ describe("the Ollama card", () => {
     );
     expect(field(html, "Model name")).toContain('value="qwen3.5:4b"');
     // As the markup escapes it.
-    expect(field(html, "Model name")).toContain(problem.replace("'", "&#x27;"));
+    expect(field(html, "Model name")).toContain(problem.replaceAll("'", "&#x27;"));
   });
 });
 

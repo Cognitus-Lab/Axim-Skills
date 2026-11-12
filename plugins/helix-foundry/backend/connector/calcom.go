@@ -2,6 +2,8 @@ package connector
 
 import (
 	"context"
+	"crypto/hmac"
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
@@ -423,12 +425,30 @@ func (k *calcomKind) get(ctx context.Context, key, path, version string, query u
 	return status, body, nil
 }
 
+var (
+	calcomKeySaltOnce sync.Once
+	calcomKeySalt     [32]byte
+)
+
+func hashCalcomKey(key string) [sha256.Size]byte {
+	calcomKeySaltOnce.Do(func() {
+		if _, err := rand.Read(calcomKeySalt[:]); err != nil {
+			copy(calcomKeySalt[:], "helix-foundry-calcom-key-salt")
+		}
+	})
+	h := hmac.New(sha256.New, calcomKeySalt[:])
+	h.Write([]byte(key))
+	var out [sha256.Size]byte
+	copy(out[:], h.Sum(nil))
+	return out
+}
+
 // pace is key's limiter, shared by every read of the key in this process; a
 // key used elsewhere at the same time can still spend the limit, and a 429
 // then refuses the read. A limiter back at its full burst remembers nothing,
 // so the next new key drops it and only keys in use stay.
 func (k *calcomKind) pace(key string) *rate.Limiter {
-	id := sha256.Sum256([]byte(key))
+	id := hashCalcomKey(key)
 	k.mu.Lock()
 	defer k.mu.Unlock()
 	if l, ok := k.paces[id]; ok {

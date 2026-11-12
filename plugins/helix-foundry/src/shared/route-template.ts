@@ -12,7 +12,7 @@ export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 const SEGMENT_VALUE = "(?!\\.\\.?(?:[/:]|$))[A-Za-z0-9._-]+";
 const PARAM = /\{([A-Za-z][A-Za-z0-9_]*)\}/g;
 const TEMPLATE =
-  /^\/v1(?:\/(?:[A-Za-z0-9._-]+|\{[A-Za-z][A-Za-z0-9_]*\})+(?::[A-Za-z][A-Za-z0-9-]*)?)+$/;
+  /^\/v1(?:\/(?:\{[A-Za-z][A-Za-z0-9_]*\}|[A-Za-z0-9._-])+(?::[A-Za-z][A-Za-z0-9-]*)?)+$/;
 
 export type CompiledTemplate = {
   template: RouteTemplate;
@@ -38,7 +38,7 @@ export function compileTemplate(template: RouteTemplate): CompiledTemplate {
         params.push(part);
         return `(${SEGMENT_VALUE})`;
       }
-      return part.replace(/[.]/g, "\\.");
+      return part.replace(/[.*+?^${}()|[\]\\-]/g, "\\$&");
     })
     .join("");
   return { template, regex: new RegExp(`^${source}$`), params };

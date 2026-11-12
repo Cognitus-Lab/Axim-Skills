@@ -204,10 +204,11 @@ func decodeFoundryKey(encoded string) ([]foundryKeyValue, bool) {
 						return nil, false
 					}
 					code, err := strconv.ParseUint(string(runes[i+1:i+end]), 16, 32)
-					if err != nil || !utf8.ValidRune(rune(code)) {
+					if err != nil || code > unicode.MaxRune || !utf8.ValidRune(rune(code)) {
 						return nil, false
 					}
-					body.WriteRune(rune(code))
+					r := rune(code)
+					body.WriteRune(r)
 					i += end + 1
 				default:
 					return nil, false

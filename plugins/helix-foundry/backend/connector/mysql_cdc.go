@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"hash/fnv"
 	"log/slog"
+	"math"
 	"strconv"
 	"strings"
 	"time"
@@ -708,7 +709,14 @@ func (r *mysqlBinlogRead) flush(ctx context.Context, f *mysqlFollowed) error {
 	}
 	var chunk []string
 	fetch := func() error {
-		args := make([]any, 0, len(chunk)*len(f.key))
+		totalArgs := 0
+		if len(f.key) > 0 && len(chunk) > 0 {
+			if len(chunk) > math.MaxInt/len(f.key) {
+				return fmt.Errorf("chunk size overflow")
+			}
+			totalArgs = len(chunk) * len(f.key)
+		}
+		args := make([]any, 0, totalArgs)
 		tuples := make([]string, len(chunk))
 		for i, id := range chunk {
 			args = append(args, f.pending[id].args...)

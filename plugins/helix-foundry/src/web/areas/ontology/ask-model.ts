@@ -1382,11 +1382,17 @@ export function queryText(q: OntologyQuery): QueryText {
  * plainText('<b>Paid</b> ![x](https://e.com/x.png) [see](https://e.com) **now**'); // "Paid see now"
  */
 export function plainText(text: string): string {
-  return text
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
-    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
-    .replace(/<\/?[a-zA-Z][^>]*>/g, "")
-    .replace(/\*\*|__|`/g, "")
+  let prev = "";
+  let curr = text;
+  while (curr !== prev) {
+    prev = curr;
+    curr = curr
+      .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+      .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+      .replace(/<\/?[a-zA-Z][^>]*>/g, "")
+      .replace(/\*\*|__|`/g, "");
+  }
+  return curr
     .replace(/^[ \t]*#{1,6}[ \t]+/gm, "")
     .replace(/[ \t]{2,}/g, " ")
     .trim();
