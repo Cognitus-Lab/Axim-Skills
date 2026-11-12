@@ -10,8 +10,8 @@ on:
 
 jobs:
   analyze:
-    name: CodeQL (Swift)
-    runs-on: macos-15
+    name: CodeQL (${{ matrix.language }})
+    runs-on: ${{ matrix.os }}
     permissions:
       security-events: write
       packages: read
@@ -24,6 +24,13 @@ jobs:
         include:
           - language: swift
             build-mode: manual
+            os: macos-15
+          - language: go
+            build-mode: autobuild
+            os: ubuntu-latest
+          - language: javascript-typescript
+            build-mode: none
+            os: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -36,6 +43,7 @@ jobs:
           build-mode: ${{ matrix.build-mode }}
 
       - name: Build Swift Code
+        if: matrix.language == 'swift'
         run: |
           cd plugins/terminal-mac
           swift build
