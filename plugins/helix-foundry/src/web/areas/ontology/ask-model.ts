@@ -1381,18 +1381,41 @@ export function queryText(q: OntologyQuery): QueryText {
  * @example
  * plainText('<b>Paid</b> ![x](https://e.com/x.png) [see](https://e.com) **now**'); // "Paid see now"
  */
-export function plainText(text: string): string {
+function stripHtmlTags(input: string): string {
   let prev = "";
-  let curr = text;
+  let curr = input;
   while (curr !== prev) {
     prev = curr;
-    curr = curr
+    let out = "";
+    let inTag = false;
+    for (let i = 0; i < curr.length; i++) {
+      const ch = curr[i];
+      if (ch === "<") {
+        const rest = curr.slice(i);
+        if (/^<\/?\s*[a-zA-Z]/.test(rest)) {
+          inTag = true;
+          continue;
+        }
+      }
+      if (inTag) {
+        if (ch === ">") inTag = false;
+        continue;
+      }
+      out += ch;
+    }
+    curr = out;
+  }
+  return curr;
+}
+
+export function plainText(text: string): string {
+  const stripped = stripHtmlTags(
+    text
       .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
       .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
-      .replace(/<[^>]*>/g, (tag) => (/^<\/?\s*[a-zA-Z]/.test(tag) ? "" : tag))
-      .replace(/\*\*|__|`/g, "");
-  }
-  return curr
+      .replace(/\*\*|__|`/g, ""),
+  );
+  return stripped
     .replace(/^[ \t]*#{1,6}[ \t]+/gm, "")
     .replace(/[ \t]{2,}/g, " ")
     .trim();
