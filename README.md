@@ -42,6 +42,7 @@ Plugins are installed to `~/.axim/plugins/installed/` on the user's machine and 
 | [`sql`](plugins/sql/) | Local & remote SQL database manager: store, query, and retrieve datasets via SQLite, Postgres, MySQL | ✅ | ✅ | — |
 | [`bruno`](plugins/bruno/) | Team API testing, bulk execution, spec import (OpenAPI/cURL), and docs generation | ✅ | ✅ | — |
 | [`task-engine`](plugins/task-engine/) | Nuuk Engine for scoping and harvesting user computer activity into ML/AI datasets | ✅ | ✅ | — |
+| [`axim-scan`](plugins/axim-scan/) | Enterprise code security scanner: OWASP Top 10, CWE flaws, bugs, and secrets auditing | ✅ | ✅ | — |
 
 ---
 
@@ -111,6 +112,19 @@ Exposes: `bruno_ensure_cli`, `bruno_run`, `bruno_import`, `bruno_docs`.
 }
 ```
 
+#### AXIM Scan Security Plugin (`plugins/axim-scan/mcp.json`)
+```json
+{
+  "mcpServers": {
+    "axim-scan": {
+      "command": "python3",
+      "args": ["/path/to/Axim-Skills/plugins/axim-scan/mcp_server.py"]
+    }
+  }
+}
+```
+Exposes: `axim_scan`, `axim_scan_code`, `axim_scan_rules_list`, `axim_scan_explain`, `axim_scan_ensure_cli`.
+
 ---
 
 ## Available Skills (`skills/`)
@@ -122,6 +136,7 @@ All skills are available directly under `skills/<skill-name>/` for direct agent 
 | [`sql`](skills/sql/) | Database & SQL | Store, query, and retrieve datasets with SQLite/Postgres/MySQL, CSV import, and data export |
 | [`bruno`](skills/bruno/) | API & Networking | Bulk API execution, automated REST/GraphQL testing, OpenAPI import, and HTML documentation |
 | [`task-engine`](skills/task-engine/) | Data Harvesting | Extract and structure desktop workflows into clean JSON-L ML training datasets |
+| [`axim-scan`](skills/axim-scan/) | Code Security | Static code security analysis, OWASP Top 10, CWE flaws, secret scanning, and automated bug fixes |
 | [`helix-foundry`](skills/helix-foundry/) | Graph & Ontology | Connect databases, SaaS tools, and documents into unified knowledge graphs |
 | [`helix-foundry-onboarding`](skills/helix-foundry-onboarding/) | Graph & Ontology | End-to-end ontology setup wizard with schema generation and verification |
 | [`helix-foundry-mcp`](skills/helix-foundry-mcp/) | Graph & Ontology | MCP read tools, job states, and graph inspection for Helix Foundry |

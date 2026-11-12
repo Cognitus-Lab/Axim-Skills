@@ -1,0 +1,18 @@
+{
+  "name": "axim-scan",
+  "version": "1.0.0",
+  "description": "Enterprise static analysis, code security auditing, and bug detection engine for AXIM & Berry: scan repositories, workspaces, and code snippets for OWASP Top 10 vulnerabilities, CWE security flaws, code smells, and hardcoded secrets with automated remediation.",
+  "author": "Cognitus",
+  "license": "Apache-2.0",
+  "repository": "https://github.com/Cognitus-Lab/Axim-Skills",
+  "axim": {
+    "minVersion": "1.0.0"
+  },
+  "capabilities": {
+    "tools": true,
+    "skills": true,
+    "mcp": true,
+    "agents": false,
+    "scripts": true
+  }
+}
