@@ -63,7 +63,7 @@
     "@types/papaparse": "5.5.2",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
-    "@vitest/coverage-v8": "4.1.11",
+    "@vitest/coverage-v8": "^4.1.12",
     "ajv": "8.20.0",
     "concurrently": "9.2.5",
     "eslint": "^9.39.0",
@@ -75,11 +75,15 @@
     "typescript": "5.9.3",
     "typescript-eslint": "^8.46.0",
     "unpdf": "1.9.1",
-    "vitest": "4.1.11"
+    "vitest": "^4.1.12"
   },
   "pnpm": {
     "ignoredBuiltDependencies": [
       "esbuild"
-    ]
+    ],
+    "overrides": {
+      "minimatch": ">=11.0.1",
+      "@vitest/mocker": ">=4.1.12"
+    }
   }
 }
