@@ -30,6 +30,32 @@ except ImportError:
     SECRET_RULES = axim_scan_engine.SECRET_RULES
     SUPPLY_CHAIN_PATTERNS = axim_scan_engine.SUPPLY_CHAIN_PATTERNS
 
+def _runtime_prologue() -> None:
+    """Fail fast with an actionable message if the interpreter or engine is unusable.
+
+    Berry users may install this plugin on machines where `python3` resolves to a
+    different interpreter, or where the engine's imports are unavailable. Rather than
+    crashing mid-session with a bare traceback, emit a clear diagnostic to stderr and
+    exit non-zero so the MCP client reports a clean startup failure.
+    """
+    if sys.version_info < (3, 8):
+        sys.stderr.write(
+            "[axim-scan] ERROR: Python 3.8+ is required (found {}.{}).\n"
+            "            Install Python 3.8 or newer, then restart Berry.\n".format(
+                sys.version_info[0], sys.version_info[1]
+            )
+        )
+        sys.exit(2)
+    try:
+        AximScanEngine()
+    except Exception as exc:  # noqa: BLE001 - surface any import/init failure clearly
+        sys.stderr.write(
+            "[axim-scan] ERROR: failed to initialize the scan engine: {}\n"
+            "            Verify `python3` on your PATH is a working interpreter and that\n"
+            "            this plugin's files are intact, then restart Berry.\n".format(exc)
+        )
+        sys.exit(2)
+
 engine = AximScanEngine()
 
 TOOLS: List[Dict[str, Any]] = [
@@ -277,6 +303,7 @@ def _respond(msg_id: Any, result: Any) -> None:
 
 
 def main() -> None:
+    _runtime_prologue()
     while True:
         try:
             line = sys.stdin.readline()
