@@ -10,15 +10,16 @@ import sys
 from http.server import BaseHTTPRequestHandler
 from pathlib import Path
 
-# Add plugin parent directory to path so axim_scan_engine is accessible
-PARENT_DIR = Path(__file__).resolve().parent.parent
+# Add current dir and parent directories so axim_scan_engine is accessible
+CURRENT_DIR = Path(__file__).resolve().parent
+PARENT_DIR = CURRENT_DIR.parent
+sys.path.insert(0, str(CURRENT_DIR))
 sys.path.insert(0, str(PARENT_DIR))
 
 try:
     from axim_scan_engine import AximScanEngine
 except ImportError:
-    # If deployed directly
-    sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
+    sys.path.insert(0, str(PARENT_DIR.parent))
     from axim_scan_engine import AximScanEngine
 
 engine = AximScanEngine()
