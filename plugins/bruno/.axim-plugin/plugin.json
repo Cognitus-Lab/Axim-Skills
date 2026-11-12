@@ -1,0 +1,18 @@
+{
+  "name": "bruno",
+  "version": "1.0.0",
+  "description": "Run, test, and automate HTTP/REST/GraphQL/gRPC/WebSocket API endpoints in bulk from Berry. Execute requests, collections, and folders; import from OpenAPI/cURL; generate reports (JSON/JUnit/HTML); and manage environments. The CLI is built from the team's own source checkout or pulled from the internal mirror on demand.",
+  "author": "Cognitus",
+  "license": "MIT",
+  "repository": "https://github.com/Cognitus-Lab/Axim-Skills",
+  "axim": {
+    "minVersion": "1.0.0"
+  },
+  "capabilities": {
+    "tools": true,
+    "skills": true,
+    "mcp": true,
+    "agents": false,
+    "scripts": true
+  }
+}
