@@ -40,6 +40,76 @@ Plugins are installed to `~/.axim/plugins/installed/` on the user's machine and 
 | [`github`](plugins/github/) | Native GitHub integration: inspect repos, search code, manage issues, and PR workflows | ✅ | ✅ | — |
 | [`helix-foundry`](plugins/helix-foundry/) | Enterprise ontology engine & knowledge graph connector platform with Analyst querying | ✅ | ✅ | — |
 | [`sql`](plugins/sql/) | Local & remote SQL database manager: store, query, and retrieve datasets via SQLite, Postgres, MySQL | ✅ | ✅ | — |
+| [`bruno`](plugins/bruno/) | Team API testing, bulk execution, spec import (OpenAPI/cURL), and docs generation | ✅ | ✅ | — |
+| [`task-engine`](plugins/task-engine/) | Nuuk Engine for scoping and harvesting user computer activity into ML/AI datasets | ✅ | ✅ | — |
+
+---
+
+## Model Context Protocol (MCP) Integration
+
+Any MCP client (such as Berry, Claude Desktop, Cursor, or AGY) can connect directly to Axim-Skills over standard JSON-RPC 2.0 stdio.
+
+### Root MCP Server (`mcp.json`)
+
+Connect once to access all bundled skills and invoke any plugin tools dynamically:
+
+```json
+{
+  "mcpServers": {
+    "axim-skills": {
+      "command": "python3",
+      "args": ["/path/to/Axim-Skills/mcp_server.py"]
+    }
+  }
+}
+```
+
+Exposed MCP Tools:
+- `axim_list_skills`: Browse all available skills and descriptions.
+- `axim_get_skill`: Read full directives and instructions for any skill.
+- `axim_list_plugins`: List all active plugins, manifests, and MCP tool catalogs.
+- `axim_call_plugin_tool`: Call any plugin tool (e.g. `bruno_ensure_cli`, `bruno_run`, `sql_query`, etc.).
+
+### Direct Plugin MCP Servers
+
+Individual plugins can also be connected directly as standalone MCP servers:
+
+#### Bruno API Testing Plugin (`plugins/bruno/mcp.json`)
+```json
+{
+  "mcpServers": {
+    "bruno": {
+      "command": "python3",
+      "args": ["/path/to/Axim-Skills/plugins/bruno/mcp_server.py"]
+    }
+  }
+}
+```
+Exposes: `bruno_ensure_cli`, `bruno_run`, `bruno_import`, `bruno_docs`.
+
+#### SQL Database Plugin (`plugins/sql/mcp.json`)
+```json
+{
+  "mcpServers": {
+    "sql": {
+      "command": "python3",
+      "args": ["/path/to/Axim-Skills/plugins/sql/mcp_server.py"]
+    }
+  }
+}
+```
+
+#### Task Engine / Nuuk Engine Plugin (`plugins/task-engine/mcp.json`)
+```json
+{
+  "mcpServers": {
+    "task-engine": {
+      "command": "python3",
+      "args": ["/path/to/Axim-Skills/plugins/task-engine/mcp_server.py"]
+    }
+  }
+}
+```
 
 ---
 
@@ -50,6 +120,8 @@ All skills are available directly under `skills/<skill-name>/` for direct agent 
 | Skill | Category | Description |
 |-------|----------|-------------|
 | [`sql`](skills/sql/) | Database & SQL | Store, query, and retrieve datasets with SQLite/Postgres/MySQL, CSV import, and data export |
+| [`bruno`](skills/bruno/) | API & Networking | Bulk API execution, automated REST/GraphQL testing, OpenAPI import, and HTML documentation |
+| [`task-engine`](skills/task-engine/) | Data Harvesting | Extract and structure desktop workflows into clean JSON-L ML training datasets |
 | [`helix-foundry`](skills/helix-foundry/) | Graph & Ontology | Connect databases, SaaS tools, and documents into unified knowledge graphs |
 | [`helix-foundry-onboarding`](skills/helix-foundry-onboarding/) | Graph & Ontology | End-to-end ontology setup wizard with schema generation and verification |
 | [`helix-foundry-mcp`](skills/helix-foundry-mcp/) | Graph & Ontology | MCP read tools, job states, and graph inspection for Helix Foundry |
