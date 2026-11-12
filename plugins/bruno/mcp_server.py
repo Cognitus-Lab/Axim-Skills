@@ -57,22 +57,61 @@ def _run(cmd, timeout=CLI_TIMEOUT):
 
 
 def _cli_path():
-    return CLI_CACHE_DIR / "node_modules" / ".bin" / CLI_NAME
+    local_bru = LOCAL_SRC_DIR / "packages" / "bruno-cli" / "bin" / "bru.js"
+    if local_bru.exists():
+        return local_bru
+    cached_bru = CLI_CACHE_DIR / "packages" / "bruno-cli" / "bin" / "bru.js"
+    if cached_bru.exists():
+        return cached_bru
+    cached_bin = CLI_CACHE_DIR / "node_modules" / ".bin" / CLI_NAME
+    if cached_bin.exists():
+        return cached_bin
+    return local_bru
+
+
+def _cli_cmd(extra_args=None):
+    p = _cli_path()
+    node = shutil.which("node") or "/usr/local/bin/node"
+    cmd = [node, str(p)] if str(p).endswith(".js") else [str(p)]
+    if extra_args:
+        cmd.extend(extra_args)
+    return cmd
 
 
 def _cli_installed():
     p = _cli_path()
-    return p.exists() and _run([str(p), "--version"], timeout=60)[0] == 0
+    if not p.exists():
+        return False
+    rc, _, _ = _run(_cli_cmd(["--version"]), timeout=60)
+    return rc == 0
+
 
 def _provision_local():
     src = LOCAL_SRC_DIR
     if not (src / "package.json").exists():
         return False, f"local source checkout not found at {src}"
-    CLI_CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    rc, out, err = _run(["npm", "install", "--prefix", str(CLI_CACHE_DIR), str(src)])
-    if rc == 0 and _cli_installed():
+    npm = shutil.which("npm") or "/usr/local/bin/npm"
+    node = shutil.which("node") or "/usr/local/bin/node"
+
+    # Install dependencies and build required internal workspace packages
+    build_steps = [
+        [npm, "run", "build:schema-types"],
+        [npm, "run", "build:bruno-common"],
+        [npm, "run", "build:bruno-converters"],
+        [npm, "run", "build:bruno-requests"],
+        [npm, "run", "build:bruno-filestore"],
+        [npm, "run", "build:bruno-io"],
+        [npm, "run", "build:bruno-query"],
+        [npm, "run", "build:bruno-sqlite"],
+        [node, str(src / "packages" / "bruno-js" / "src" / "sandbox" / "bundle-libraries.js")],
+    ]
+    for step in build_steps:
+        subprocess.run(step, cwd=str(src), capture_output=True, text=True, timeout=120)
+
+    if _cli_installed():
         return True, f"built CLI from local checkout {src}"
-    return False, f"local build failed: {err or out}"
+    return False, "local monorepo build check failed"
+
 
 def _provision_mirror():
     if not MIRROR_REPO:
@@ -83,10 +122,25 @@ def _provision_mirror():
         rc, out, err = _run(["git", "clone", MIRROR_REPO, str(dest)])
         if rc != 0:
             return False, f"mirror clone failed: {err or out}"
-    rc, out, err = _run(["npm", "install", "--prefix", str(CLI_CACHE_DIR), str(dest)])
-    if rc == 0 and _cli_installed():
+    npm = shutil.which("npm") or "/usr/local/bin/npm"
+    node = shutil.which("node") or "/usr/local/bin/node"
+    _run([npm, "install", "--legacy-peer-deps", "--cache", "/tmp/npm-cache", "--ignore-scripts"], timeout=300)
+    build_steps = [
+        [npm, "run", "build:schema-types"],
+        [npm, "run", "build:bruno-common"],
+        [npm, "run", "build:bruno-converters"],
+        [npm, "run", "build:bruno-requests"],
+        [npm, "run", "build:bruno-filestore"],
+        [npm, "run", "build:bruno-io"],
+        [npm, "run", "build:bruno-query"],
+        [npm, "run", "build:bruno-sqlite"],
+        [node, str(dest / "packages" / "bruno-js" / "src" / "sandbox" / "bundle-libraries.js")],
+    ]
+    for step in build_steps:
+        subprocess.run(step, cwd=str(dest), capture_output=True, text=True, timeout=120)
+    if _cli_installed():
         return True, f"built CLI from internal mirror {MIRROR_REPO}"
-    return False, f"mirror build failed: {err or out}"
+    return False, "mirror monorepo build check failed"
 
 def ensure_cli(force_reinstall=False):
     if _cli_installed() and not force_reinstall:
@@ -116,7 +170,7 @@ def tool_bruno_run(args):
         return {"ok": False, "error": "collection_path is required"}
     if not _cli_installed():
         return {"ok": False, "error": "CLI not installed; call bruno_ensure_cli first"}
-    cmd = [str(_cli_path()), "run", cp]
+    cmd = _cli_cmd(["run", cp])
     for t in args.get("targets", []):
         cmd += ["--request", t]
     if args.get("environment"):
@@ -134,7 +188,7 @@ def tool_bruno_import(args):
         return {"ok": False, "error": "source_path and collection_path are required"}
     if not _cli_installed():
         return {"ok": False, "error": "CLI not installed; call bruno_ensure_cli first"}
-    cmd = [str(_cli_path()), "import", src, "--format", fmt, cp]
+    cmd = _cli_cmd(["import", src, "--format", fmt, cp])
     rc, out, err = _run(cmd)
     return {"ok": rc == 0, "returncode": rc, "stdout": out, "stderr": err}
 
@@ -145,7 +199,7 @@ def tool_bruno_docs(args):
         return {"ok": False, "error": "collection_path is required"}
     if not _cli_installed():
         return {"ok": False, "error": "CLI not installed; call bruno_ensure_cli first"}
-    cmd = [str(_cli_path()), "docs", cp]
+    cmd = _cli_cmd(["docs", cp])
     if args.get("output_path"):
         cmd += ["--output", args["output_path"]]
     rc, out, err = _run(cmd)
