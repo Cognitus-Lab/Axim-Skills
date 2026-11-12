@@ -424,6 +424,7 @@ class AximScanEngine:
 
                 findings.append({
                     "id": rule["id"],
+                    "rule_id": rule["id"],
                     "name": rule["name"],
                     "category": "sast",
                     "severity": rule["severity"],
@@ -552,6 +553,7 @@ class AximScanEngine:
 
                 findings.append({
                     "id": rule["id"],
+                    "rule_id": rule["id"],
                     "name": rule["name"],
                     "category": "supply-chain",
                     "severity": rule["severity"],
@@ -596,31 +598,62 @@ class AximScanEngine:
             return {"status": "error", "error": f"Invalid pattern syntax: {e}"}
 
         target = Path(target_path).expanduser().resolve()
-        files = [target] if target.is_file() else [p for p in target.glob(f"**/*") if p.is_file() and p.suffix in LANGUAGE_EXTENSIONS]
-
         matches = []
-        for f in files[:200]:
-            try:
-                text = f.read_text(encoding="utf-8", errors="replace")
-                lines = text.splitlines()
-                for m in compiled.finditer(text):
-                    pos = m.start()
-                    line_no = text.count("\n", 0, pos) + 1
-                    line_text = lines[line_no - 1] if line_no - 1 < len(lines) else m.group(0)
-                    matches.append({
-                        "file": str(f.relative_to(target) if target.is_dir() else f.name),
-                        "line": line_no,
-                        "matched": m.group(0).strip(),
-                        "snippet": line_text.strip()[:160]
-                    })
-            except Exception:
-                continue
+        if target.exists():
+            files = [target] if target.is_file() else [p for p in target.glob(f"**/*") if p.is_file() and p.suffix in LANGUAGE_EXTENSIONS]
+            for f in files[:200]:
+                try:
+                    text = f.read_text(encoding="utf-8", errors="replace")
+                    lines = text.splitlines()
+                    for m in compiled.finditer(text):
+                        pos = m.start()
+                        line_no = text.count("\n", 0, pos) + 1
+                        line_text = lines[line_no - 1] if line_no - 1 < len(lines) else m.group(0)
+                        matches.append({
+                            "file": str(f.relative_to(target) if target.is_dir() else f.name),
+                            "line": line_no,
+                            "matched": m.group(0).strip(),
+                            "snippet": line_text.strip()[:160]
+                        })
+                except Exception:
+                    continue
+        else:
+            text = target_path
+            lines = text.splitlines()
+            for m in compiled.finditer(text):
+                pos = m.start()
+                line_no = text.count("\n", 0, pos) + 1
+                line_text = lines[line_no - 1] if line_no - 1 < len(lines) else m.group(0)
+                matches.append({
+                    "file": "inline",
+                    "line": line_no,
+                    "matched": m.group(0).strip(),
+                    "snippet": line_text.strip()[:160]
+                })
 
         return {
             "status": "success",
             "pattern": pattern,
             "matches_count": len(matches),
             "matches": matches
+        }
+
+    def scan_dependencies(self, content_or_path: str, manifest_type: Optional[str] = None) -> Dict[str, Any]:
+        """Scans dependency manifests for vulnerable package versions."""
+        p = Path(content_or_path).expanduser().resolve()
+        if p.exists() and p.is_file():
+            content = p.read_text(encoding="utf-8", errors="replace")
+            m_type = manifest_type or p.name
+            fname = p.name
+        else:
+            content = content_or_path
+            m_type = manifest_type or "requirements.txt"
+            fname = "inline"
+        findings = self._scan_supply_chain_content(content, m_type, fname)
+        return {
+            "status": "success",
+            "findings_count": len(findings),
+            "findings": findings
         }
 
     def _run_external_cli(self, target: str, config: str, severity: Optional[str]) -> Dict[str, Any]:
