@@ -3,9 +3,10 @@
 mcp_server.py — Model Context Protocol (MCP) Server for the AXIM Scan Plugin.
 Author: Cognitus
 Repository: https://github.com/Cognitus-Lab/Axim-Skills
+License: LGPL-2.1-only / Apache-2.0
 
 Allows Berry, Claude Desktop, Cursor, and any MCP client to perform automated static
-analysis, bug discovery, and security scans over standard JSON-RPC 2.0 stdio.
+analysis, bug discovery, supply-chain auditing, and secret detection over standard JSON-RPC 2.0 stdio.
 """
 
 import json
@@ -21,18 +22,20 @@ PLUGIN_DIR = Path(__file__).parent.resolve()
 sys.path.insert(0, str(PLUGIN_DIR))
 
 try:
-    from axim_scan_engine import AximScanEngine, BUILTIN_RULES
+    from axim_scan_engine import AximScanEngine, BUILTIN_RULES, SECRET_RULES, SUPPLY_CHAIN_PATTERNS
 except ImportError:
     import axim_scan_engine
     AximScanEngine = axim_scan_engine.AximScanEngine
     BUILTIN_RULES = axim_scan_engine.BUILTIN_RULES
+    SECRET_RULES = axim_scan_engine.SECRET_RULES
+    SUPPLY_CHAIN_PATTERNS = axim_scan_engine.SUPPLY_CHAIN_PATTERNS
 
 engine = AximScanEngine()
 
 TOOLS: List[Dict[str, Any]] = [
     {
         "name": "axim_scan",
-        "description": "Scan a directory, workspace, or file for security vulnerabilities, bugs, CWEs, OWASP Top 10 risks, and hardcoded secrets.",
+        "description": "Full-spectrum security scan across 30+ languages for OWASP Top 10 vulnerabilities, CWE bugs, supply-chain risks, and hardcoded secrets.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -42,7 +45,7 @@ TOOLS: List[Dict[str, Any]] = [
                 },
                 "config": {
                     "type": "string",
-                    "description": "Rule configuration: 'default', 'builtin', 'p/security-audit', 'p/owasp-top-ten', 'p/secrets'",
+                    "description": "Rule configuration: 'default', 'builtin', 'p/security-audit', 'p/owasp-top-ten', 'p/secrets', 'p/supply-chain'",
                     "default": "default"
                 },
                 "severity": {
@@ -72,7 +75,7 @@ TOOLS: List[Dict[str, Any]] = [
                 },
                 "language": {
                     "type": "string",
-                    "description": "Programming language (python, javascript, typescript, go, java, swift, rust, php, ruby, c)",
+                    "description": "Programming language (python, javascript, typescript, go, java, swift, rust, php, ruby, c, csharp, etc.)",
                     "default": "python"
                 },
                 "output_format": {
@@ -86,14 +89,68 @@ TOOLS: List[Dict[str, Any]] = [
         }
     },
     {
+        "name": "axim_scan_pattern",
+        "description": "Search code using semantic patterns with metavariables and wildcards (e.g. '$X == $X', 'os.system(...)', 'eval($X)').",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "pattern": {
+                    "type": "string",
+                    "description": "Semantic code pattern (e.g. '$X == $X', 'open(...)', 'dangerouslySetInnerHTML={...}')"
+                },
+                "target_path": {
+                    "type": "string",
+                    "description": "Directory or file to search",
+                    "default": "."
+                },
+                "language": {
+                    "type": "string",
+                    "description": "Language filter",
+                    "default": "python"
+                }
+            },
+            "required": ["pattern"]
+        }
+    },
+    {
+        "name": "axim_scan_supply_chain",
+        "description": "Scan package manifests (package.json, go.mod, Cargo.toml, requirements.txt, Package.swift, pom.xml) for dependency risks.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "target_path": {
+                    "type": "string",
+                    "description": "Directory or file path of package manifest",
+                    "default": "."
+                }
+            },
+            "required": []
+        }
+    },
+    {
+        "name": "axim_scan_secrets",
+        "description": "Dedicated secrets and credential scanner: audits files for private keys, AWS tokens, JWTs, Stripe keys, and database passwords.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "target_path": {
+                    "type": "string",
+                    "description": "Directory or file to audit for secrets",
+                    "default": "."
+                }
+            },
+            "required": []
+        }
+    },
+    {
         "name": "axim_scan_rules_list",
-        "description": "List all built-in static analysis and security rules across languages (OWASP Top 10, CWEs, Secrets, Injections).",
+        "description": "List all built-in static analysis, supply chain, and secret rules across 30+ languages.",
         "inputSchema": {
             "type": "object",
             "properties": {
                 "language": {
                     "type": "string",
-                    "description": "Optional language filter (e.g. 'python', 'javascript', 'swift')"
+                    "description": "Optional language filter (e.g. 'python', 'javascript', 'swift', 'go')"
                 }
             },
             "required": []
@@ -101,13 +158,13 @@ TOOLS: List[Dict[str, Any]] = [
     },
     {
         "name": "axim_scan_explain",
-        "description": "Retrieve comprehensive remediation guidance, secure coding examples, and CWE/OWASP analysis for a specific vulnerability rule.",
+        "description": "Retrieve comprehensive AI remediation guidance, secure coding alternatives, and CWE/OWASP analysis for a specific vulnerability rule.",
         "inputSchema": {
             "type": "object",
             "properties": {
                 "rule_id": {
                     "type": "string",
-                    "description": "Vulnerability rule ID (e.g. 'axim.security.injection.sql-string-concat')"
+                    "description": "Vulnerability rule ID (e.g. 'axim.security.injection.sql-concat')"
                 }
             },
             "required": ["rule_id"]
@@ -115,7 +172,7 @@ TOOLS: List[Dict[str, Any]] = [
     },
     {
         "name": "axim_scan_ensure_cli",
-        "description": "Verify or provision the AXIM Scan engine and optional external AST scanner on the local machine.",
+        "description": "Verify the AXIM Scan engine and check optional external CLI accelerators on the local machine.",
         "inputSchema": {
             "type": "object",
             "properties": {},
@@ -155,6 +212,28 @@ def handle_tool(name: str, args: Dict[str, Any]) -> Any:
             return res
         return engine.format_markdown(res)
 
+    elif name == "axim_scan_pattern":
+        pattern = args.get("pattern", "")
+        target = args.get("target_path", ".")
+        lang = args.get("language", "python")
+        return engine.scan_pattern(pattern, target, language=lang)
+
+    elif name == "axim_scan_supply_chain":
+        target = args.get("target_path", ".")
+        res = engine.scan_path(target)
+        sc_findings = [f for f in res.get("findings", []) if f.get("category") == "supply-chain"]
+        res["findings"] = sc_findings
+        res["findings_count"] = len(sc_findings)
+        return engine.format_markdown(res)
+
+    elif name == "axim_scan_secrets":
+        target = args.get("target_path", ".")
+        res = engine.scan_path(target)
+        sec_findings = [f for f in res.get("findings", []) if f.get("category") == "secrets"]
+        res["findings"] = sec_findings
+        res["findings_count"] = len(sec_findings)
+        return engine.format_markdown(res)
+
     elif name == "axim_scan_rules_list":
         lang = args.get("language")
         rules = engine.list_rules()
@@ -164,27 +243,28 @@ def handle_tool(name: str, args: Dict[str, Any]) -> Any:
 
     elif name == "axim_scan_explain":
         rule_id = args.get("rule_id", "")
-        matched = next((r for r in BUILTIN_RULES if r["id"] == rule_id), None)
+        all_rules = BUILTIN_RULES + SECRET_RULES + SUPPLY_CHAIN_PATTERNS
+        matched = next((r for r in all_rules if r["id"] == rule_id), None)
         if not matched:
             return {"error": f"Rule '{rule_id}' not found in catalog."}
         return {
             "id": matched["id"],
             "name": matched["name"],
             "severity": matched["severity"],
-            "cwe": matched["cwe"],
-            "owasp": matched["owasp"],
+            "cwe": matched.get("cwe", "CWE-General"),
+            "owasp": matched.get("owasp", "General"),
             "message": matched["message"],
             "remediation": matched["fix"],
-            "languages": matched["languages"]
+            "languages": matched.get("languages", ["all"])
         }
 
     elif name == "axim_scan_ensure_cli":
         cli = shutil.which("semgrep")
         return {
             "status": "ready",
-            "native_engine": "axim-scan-native (active)",
-            "external_cli": cli or "not_installed (optional)",
-            "message": "AXIM Scan engine is fully operational. Native multi-language rules are active."
+            "native_engine": "axim-scan-native (active, 30+ languages supported)",
+            "external_cli": cli or "not_installed (optional accelerator)",
+            "capabilities": ["sast", "sca_supply_chain", "secrets", "semantic_pattern_search", "ai_remediation"]
         }
 
     return {"error": f"Unknown tool '{name}'"}

@@ -1,53 +1,59 @@
 ---
 name: axim-scan
-description: Static application security testing (SAST), code vulnerability auditing, and bug detection engine for AXIM & Berry. Scan repositories, workspaces, and code snippets for OWASP Top 10 vulnerabilities, CWE security flaws, and hardcoded secrets with automated fixes.
+description: Full-spectrum static application security testing (SAST), supply-chain SCA analysis, secret detection, and semantic bug pattern searching for AXIM & Berry across 30+ programming languages.
 keywords:
   - security scan
   - scan code
   - audit code
   - vulnerability scan
-  - check security
-  - find bugs
-  - security risk
+  - supply chain
+  - sca
   - sast
+  - secrets
+  - api keys
+  - hardcoded secrets
+  - bug detection
+  - code review
   - owasp
   - cwe
-  - sql injection
-  - command injection
-  - xss
-  - hardcoded secrets
-  - api keys
-  - code review
+  - semgrep
+  - pattern search
+  - semantic search
 ---
 
-# AXIM Scan — Security & Bug Detection Skill
+# AXIM Scan — Enterprise Code Security & Bug Detection Skill
 
-The `axim-scan` skill provides static application security testing (SAST), vulnerability analysis, and automated bug detection for Berry and AXIM agents. It inspects workspaces, single source files, PR diffs, or code snippets to identify critical security flaws, OWASP Top 10 vulnerabilities, CWE weaknesses, and secret leaks before code is deployed.
+The `axim-scan` skill provides static code analysis, supply-chain dependency auditing, credential leak detection, and semantic bug hunting across **30+ programming languages** for Berry and AXIM agents. It searches code, finds bugs, detects vulnerabilities, and provides AI-tailored remediation guidance directly in your workflow.
 
 ---
 
-## Capabilities
+## Language & Ecosystem Support
 
-1. **Security Vulnerability Scanning**:
-   - Detects SQL Injection (`CWE-89`), Command Injection (`CWE-78`), Arbitrary Code Execution (`CWE-95`).
-   - Detects Cross-Site Scripting (`CWE-79`) and insecure DOM sinks (`innerHTML`, `dangerouslySetInnerHTML`).
-   - Detects Path Traversal and arbitrary file read/writes (`CWE-22`).
-   - Detects Insecure Deserialization (`CWE-502`) and Server-Side Request Forgery (`CWE-918`).
-   - Identifies Broken Cryptography (`CWE-328`: MD5/SHA1 for sensitive tokens) and disabled SSL/TLS certificate verification (`CWE-295`).
+### 1. Code Analysis (30+ Languages)
+- **Systems & Compiled**: C, C++, C#, Go, Rust, Swift, Java, Kotlin, Scala, Dart
+- **Scripting & Dynamic**: Python, JavaScript, TypeScript, JSX, TSX, Ruby, PHP, Lua, R, Julia, Perl
+- **Functional**: Elixir, Clojure, OCaml, Lisp, Scheme
+- **Cloud & Smart Contracts**: Solidity, Terraform, Apex, Dockerfile
+- **Configuration & Templates**: JSON, YAML, XML, HTML, Jsonnet, Jinja, ERB
 
-2. **Hardcoded Secrets & Credential Detection**:
-   - Detects embedded API keys, JWT tokens, AWS IAM credentials, private RSA/EC keys, and bearer tokens (`CWE-798`).
-
-3. **Code Quality & Bug Auditing**:
-   - Identifies unclosed file handles and resource leaks (`CWE-775`).
-   - Proposes concrete remediation patches and secure code alternatives.
+### 2. Supply Chain & Package Managers (12 Languages, 15 Package Managers)
+- **JavaScript / TypeScript**: `package.json`, `pnpm-lock.yaml`, `package-lock.json`, `yarn.lock`
+- **Python**: `requirements.txt`, `Pipfile`, `pyproject.toml`, `poetry.lock`
+- **Go**: `go.mod`, `go.sum`
+- **Rust**: `Cargo.toml`, `Cargo.lock`
+- **Swift**: `Package.swift`, `Package.resolved`
+- **Java / Kotlin**: `pom.xml` (Maven), `build.gradle`, `build.gradle.kts` (Gradle)
+- **Ruby**: `Gemfile`, `Gemfile.lock`
+- **PHP**: `composer.json`, `composer.lock`
+- **Dart / Flutter**: `pubspec.yaml`, `pubspec.lock`
+- **C# / .NET**: `*.csproj`, `packages.config` (NuGet)
 
 ---
 
 ## Agent Tool Reference
 
 ### 1. `axim_scan`
-Scans a target directory, repository, or single file:
+Full scan of a directory or repository across SAST, Supply Chain, and Secrets:
 ```json
 {
   "name": "axim_scan",
@@ -60,61 +66,80 @@ Scans a target directory, repository, or single file:
 ```
 
 ### 2. `axim_scan_code`
-Scans an in-memory code snippet without saving to disk:
+Instant snippet scan in memory (e.g. before applying an edit or during PR review):
 ```json
 {
   "name": "axim_scan_code",
   "arguments": {
-    "code": "def query(user_id):\n    return db.execute(f'SELECT * FROM users WHERE id = {user_id}')",
+    "code": "cursor.execute(f'SELECT * FROM users WHERE id = {user_id}')",
     "language": "python",
     "output_format": "markdown"
   }
 }
 ```
 
-### 3. `axim_scan_rules_list`
-Lists all active vulnerability and bug rules:
+### 3. `axim_scan_pattern`
+Search code using semantic code patterns with metavariables (`$X`, `$VAL`) and wildcards (`...`):
+```json
+{
+  "name": "axim_scan_pattern",
+  "arguments": {
+    "pattern": "$X == $X",
+    "target_path": "src/",
+    "language": "python"
+  }
+}
+```
+
+### 4. `axim_scan_supply_chain`
+Dedicated supply-chain dependency scan to check package manifests for unpinned dependencies, insecure HTTP registries, and known risks:
+```json
+{
+  "name": "axim_scan_supply_chain",
+  "arguments": {
+    "target_path": "."
+  }
+}
+```
+
+### 5. `axim_scan_secrets`
+Dedicated secret and credential auditor (AWS keys, GitHub tokens, OpenAI keys, JWTs, Stripe keys, private keys, database URIs):
+```json
+{
+  "name": "axim_scan_secrets",
+  "arguments": {
+    "target_path": "."
+  }
+}
+```
+
+### 6. `axim_scan_rules_list`
+List available security, quality, and supply-chain rules:
 ```json
 {
   "name": "axim_scan_rules_list",
   "arguments": {
-    "language": "typescript"
+    "language": "swift"
   }
 }
 ```
 
-### 4. `axim_scan_explain`
-Provides deep remediation guidance and secure coding patterns for a finding:
+### 7. `axim_scan_explain`
+Get AI Assistant remediation guidance, secure coding alternatives, and CWE/OWASP analysis:
 ```json
 {
   "name": "axim_scan_explain",
   "arguments": {
-    "rule_id": "axim.security.injection.sql-string-concat"
+    "rule_id": "axim.security.injection.sql-concat"
   }
 }
 ```
 
-### 5. `axim_scan_ensure_cli`
-Checks scanning engine status:
+### 8. `axim_scan_ensure_cli`
+Checks engine status and reports active native or CLI accelerators:
 ```json
 {
   "name": "axim_scan_ensure_cli",
   "arguments": {}
 }
 ```
-
----
-
-## Supported Languages
-
-- Python (`.py`)
-- JavaScript & TypeScript (`.js`, `.jsx`, `.ts`, `.tsx`, `.mjs`, `.cjs`)
-- Go (`.go`)
-- Swift (`.swift`)
-- Java (`.java`)
-- Rust (`.rs`)
-- C & C++ (`.c`, `.cpp`, `.h`)
-- Ruby (`.rb`)
-- PHP (`.php`)
-- Shell scripts (`.sh`, `.bash`)
-- Configuration & Secrets (`.json`, `.yaml`, `.yml`, `.env`)
