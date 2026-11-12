@@ -30,7 +30,7 @@ ENGINE_FILE = PLUGIN_DIR / "axim_scan_engine.py"
 VERCEL_API_URL = "https://api.vercel.com/v13/deployments"
 
 
-def deploy_to_vercel(token: str, project_name: str = "axim-scan") -> dict:
+def deploy_to_vercel(token: str, project_name: str = "axim-scan", team_id: str = None) -> dict:
     # 1. Gather all files in web directory + engine file
     files_payload = []
 
@@ -60,14 +60,16 @@ def deploy_to_vercel(token: str, project_name: str = "axim-scan") -> dict:
     req_body = {
         "name": project_name,
         "files": files_payload,
+        "target": "production",
         "projectSettings": {
             "framework": None
         }
     }
 
+    url = f"{VERCEL_API_URL}?teamId={team_id}" if team_id else VERCEL_API_URL
     req_data = json.dumps(req_body).encode("utf-8")
     req = urllib.request.Request(
-        VERCEL_API_URL,
+        url,
         data=req_data,
         headers={
             "Authorization": f"Bearer {token.strip()}",
@@ -97,6 +99,7 @@ def main():
     parser = argparse.ArgumentParser(description="Deploy AXIM Scan to Vercel directly via REST API.")
     parser.add_argument("--token", help="Vercel Access Token (or set VERCEL_TOKEN env var)")
     parser.add_argument("--project", default="axim-scan", help="Vercel project name (default: axim-scan)")
+    parser.add_argument("--team", default="team_RxsLJNF5AWfkPshG4Yn9yPeu", help="Vercel team ID")
     args = parser.parse_args()
 
     token = args.token or os.environ.get("VERCEL_TOKEN")
@@ -104,7 +107,7 @@ def main():
         print("Error: No Vercel token provided. Provide via --token <token> or set VERCEL_TOKEN in environment.", file=sys.stderr)
         sys.exit(1)
 
-    deploy_to_vercel(token, args.project)
+    deploy_to_vercel(token, args.project, args.team)
 
 
 if __name__ == "__main__":
