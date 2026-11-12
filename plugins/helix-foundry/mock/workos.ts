@@ -133,29 +133,16 @@ export async function handleWorkos(
   if (req.method === "GET" && pathname === "/user_management/sessions/logout") {
     const session = db.sessions.get(url.searchParams.get("session_id") || "");
     if (session) db.sessions.delete(session.id);
-    const rawBack = url.searchParams.get("return_to") || "/";
     let back = "/";
-    if (
-      rawBack.startsWith("/") &&
-      !rawBack.startsWith("//") &&
-      !rawBack.startsWith("/\\")
-    ) {
-      back = rawBack;
-    } else {
-      try {
-        const parsed = new URL(rawBack);
-        const host = req.headers.host;
-        if (
-          host &&
-          (parsed.host === host ||
-            parsed.hostname === "localhost" ||
-            parsed.hostname === "127.0.0.1")
-        ) {
-          back = parsed.toString();
-        }
-      } catch {
-        back = "/";
+    try {
+      const raw = url.searchParams.get("return_to") || "/";
+      const dummy = "http://127.0.0.1";
+      const parsed = new URL(raw, dummy);
+      if (parsed.origin === dummy) {
+        back = parsed.pathname + parsed.search;
       }
+    } catch {
+      back = "/";
     }
     res.writeHead(302, { Location: back, "Cache-Control": "no-store" });
     res.end();

@@ -1389,7 +1389,7 @@ export function plainText(text: string): string {
     curr = curr
       .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
       .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
-      .replace(/<\/?[a-zA-Z][^>]*>/g, "")
+      .replace(/<[^>]*>/g, (tag) => (/^<\/?\s*[a-zA-Z]/.test(tag) ? "" : tag))
       .replace(/\*\*|__|`/g, "");
   }
   return curr
