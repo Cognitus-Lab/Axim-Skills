@@ -220,7 +220,9 @@ func ModelURL(raw string, r Rules) (string, error) {
 			host += ":" + strconv.Itoa(n)
 		}
 	}
-	return u.Scheme + "://" + host + strings.TrimRight(u.EscapedPath(), "/"), nil
+	path := strings.TrimRight(u.EscapedPath(), "/")
+	path = strings.TrimSuffix(path, "/chat/completions")
+	return u.Scheme + "://" + host + path, nil
 }
 
 // modelHost reports whether u's host is one the agent's URL parser reads as

@@ -24,7 +24,7 @@ Connect your databases, tools and documents, let an agent draft an ontology over
 
 ## Get started with your coding agent
 
-**On Helix Cloud.** Open [foundry.helix-db.com](https://foundry.helix-db.com) and click **Set up with your agent**. It copies a prompt for Claude Code, Codex, Cursor or any agent that can run commands. The agent adds the Helix MCP, signs you up through it if you don't have an account yet, and builds your first ontology with you. You never need the Helix dashboard: the agent sends you a link only to sign in or to enter a password or key.
+**On Helix Cloud.** Open [foundry.helix-db.com](https://foundry.helix-db.com) and click **Set up with your agent**. It copies a prompt for Berry, Claude Code, Codex, Cursor or any agent that can run commands. The agent adds the Helix MCP, signs you up through it if you don't have an account yet, and builds your first ontology with you. You never need the Helix dashboard: the agent sends you a link only to sign in or to enter a password or key.
 
 **On your computer.** With [Docker](https://docs.docker.com/get-started/get-docker/) running, paste this into your agent:
 

@@ -82,7 +82,7 @@ function EventSourcePrompt({ source }: { source: Connector }) {
       icon={Bot}
       tone="muted"
       title="Send from your agent"
-      text={`Copy a prompt for Claude Code, Codex or another agent with the Helix MCP. It says how to connect, with a send token or your own sign-in, and how to send pieces${EVENTS_URL ? ", over the MCP or HTTP" : ""}. It holds no token.`}
+      text={`Copy a prompt for Berry, Claude Code, Codex or another agent with the Helix MCP. It says how to connect, with a send token or your own sign-in, and how to send pieces${EVENTS_URL ? ", over the MCP or HTTP" : ""}. It holds no token.`}
       action={
         <Button size="sm" icon={Copy} onClick={() => void copy()}>
           Copy prompt

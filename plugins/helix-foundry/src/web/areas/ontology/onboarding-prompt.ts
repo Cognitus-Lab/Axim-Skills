@@ -16,7 +16,7 @@ import {
 } from "./model";
 
 // The prompt "Set up with your agent" copies for the user's own agent
-// (Claude Code, Codex) with the Helix MCP: what Foundry is, how to connect
+// (Berry, Claude Code, Codex) with the Helix MCP: what Foundry is, how to connect
 // the MCP, where the workspace's setup is, and the steps from there to a
 // loaded ontology, each through the MCP's tools. The landing page copies it
 // for no workspace: the agent finds the user's and reads where it stands.
@@ -76,8 +76,9 @@ export type OnboardingPromptInput = {
 export const WHAT_FOUNDRY_IS =
   "Helix Foundry turns a business’s data, the tables it syncs from apps and databases and the documents it’s given, into an ontology: the kinds of things in the business, how they link and the rules they follow. It loads the ontology into a Helix graph database, where people and AI agents explore it and ask it questions.";
 
-/** The commands that add the Helix MCP at `mcpUrl`, a line per agent. */
+/** The commands that add the Helix MCP at `mcpUrl`, a line per agent (Berry primary). */
 export const addHelixMcp = (mcpUrl: string): readonly string[] => [
+  `- Berry: \`berry mcp add helix ${mcpUrl}\` (or in AXIM: enable the \`helix-foundry\` plugin), then start chatting.`,
   `- Claude Code: \`claude mcp add --transport http helix ${mcpUrl}\`, then \`/mcp\` to sign in.`,
   `- Codex: \`codex mcp add helix --url ${mcpUrl} && codex mcp login helix\`.`,
 ];

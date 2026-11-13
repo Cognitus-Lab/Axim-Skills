@@ -163,7 +163,7 @@ export function ProductionCard() {
                   {s.id === "query" ? (
                     <>
                       <p className="pd-step-note">
-                        A prompt for Claude Code, Codex or another agent: it
+                        A prompt for Berry, Claude Code, Codex or another agent: it
                         adds the MCP, queries this ontology and helps wire it
                         into your app.
                       </p>

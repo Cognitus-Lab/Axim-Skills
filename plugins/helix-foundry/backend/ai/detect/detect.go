@@ -29,6 +29,7 @@ import (
 	"math"
 	"net/http"
 	"net/url"
+	"os"
 	"regexp"
 	"slices"
 	"strconv"
@@ -49,6 +50,9 @@ const (
 	BundledOllama = "http://127.0.0.1:11434"
 	HostOllama    = "http://host.docker.internal:11434"
 	LMStudio      = "http://host.docker.internal:1234/v1"
+	ChiikeProxy   = "https://dense.grrn.io/v1"
+	LocalChiike   = "http://host.docker.internal:8000/v1"
+	BundledChiike = "http://127.0.0.1:8000/v1"
 	AnthropicAPI  = "https://api.anthropic.com"
 	OpenAIAPI     = "https://api.openai.com"
 )
@@ -81,6 +85,8 @@ type Detector struct {
 	Ollamas []string
 	// LMStudio is LM Studio's base URL, including /v1.
 	LMStudio string
+	// ChiikeProxy is Chiike's base URL proxy, including /v1.
+	ChiikeProxy string
 	// AnthropicAPI and OpenAIAPI are where a key is checked.
 	AnthropicAPI, OpenAIAPI string
 	HTTP                    *http.Client
@@ -185,12 +191,39 @@ func (d *Detector) detect(ctx context.Context) config.DetectedAIDefault {
 	}
 	servers := make([]Server, len(ollamas))
 	var studio studioFound
+	var chiikeFound studioFound
 	var wg sync.WaitGroup
 	for i, base := range ollamas {
 		wg.Go(func() { servers[i] = d.Ollama(ctx, base) })
 	}
 	wg.Go(func() { studio = d.lmStudio(ctx) })
+	wg.Go(func() { chiikeFound = d.chiike(ctx) })
 	wg.Wait()
+
+	if chiikeFound.model != "" {
+		chiikeURL := strings.TrimSpace(os.Getenv("FOUNDRY_CHIIKE_URL"))
+		if chiikeURL == "" {
+			chiikeURL = strings.TrimSpace(os.Getenv("CHIIKE_URL"))
+		}
+		if chiikeURL == "" {
+			chiikeURL = strings.TrimSpace(os.Getenv("CHIIKE_PROXY_URL"))
+		}
+		if chiikeURL != "" {
+			chiikeURL = strings.TrimSuffix(strings.TrimSuffix(chiikeURL, "/"), "/chat/completions")
+		}
+		if chiikeURL == "" {
+			chiikeURL = or(d.ChiikeProxy, ChiikeProxy)
+		}
+		apiKey := strings.TrimSpace(os.Getenv("FOUNDRY_AI_API_KEY"))
+		if apiKey == "" {
+			apiKey = strings.TrimSpace(os.Getenv("CHIIKE_API_KEY"))
+		}
+		return config.DetectedAIDefault{Default: config.AIDefault{
+			Provider: string(ai.KindCompatible), BaseURL: chiikeURL, API: string(ai.CompatChatCompletions),
+			APIKey: apiKey,
+			Models: config.AIModels{Draft: chiikeFound.model, Ask: chiikeFound.model, Extract: chiikeFound.model, Verify: chiikeFound.model},
+		}, Summary: fmt.Sprintf("Using %s from Chiike (%s).", chiikeFound.model, chiikeURL), At: at}
+	}
 
 	var notes []string
 	for i, s := range servers {
@@ -223,7 +256,7 @@ func (d *Detector) detect(ctx context.Context) config.DetectedAIDefault {
 	if studio.answered {
 		notes = append(notes, "LM Studio on this computer serves no model: load one.")
 	}
-	summary := "No AI provider was found. Foundry looks for an ANTHROPIC_API_KEY or OPENAI_API_KEY where it was started, a model that calls tools in Ollama, and a model LM Studio serves on this computer."
+	summary := "No AI provider was found. Foundry looks for Chiike proxy (FOUNDRY_CHIIKE_URL or host.docker.internal:8000), an ANTHROPIC_API_KEY or OPENAI_API_KEY where it was started, a model that calls tools in Ollama, and a model LM Studio serves on this computer."
 	return config.DetectedAIDefault{Summary: strings.Join(append([]string{summary}, notes...), " "), At: at}
 }
 
@@ -570,6 +603,50 @@ func (d *Detector) lmStudio(ctx context.Context) studioFound {
 		}
 	}
 	return studioFound{answered: true}
+}
+
+// chiike finds Chiike running behind an OpenAI-compatible proxy (from FOUNDRY_CHIIKE_URL,
+// CHIIKE_URL, CHIIKE_PROXY_URL, d.ChiikeProxy, ChiikeProxy, LocalChiike, or BundledChiike).
+func (d *Detector) chiike(ctx context.Context) studioFound {
+	envURL := strings.TrimSpace(os.Getenv("FOUNDRY_CHIIKE_URL"))
+	if envURL == "" {
+		envURL = strings.TrimSpace(os.Getenv("CHIIKE_URL"))
+	}
+	if envURL == "" {
+		envURL = strings.TrimSpace(os.Getenv("CHIIKE_PROXY_URL"))
+	}
+	if envURL != "" {
+		envURL = strings.TrimSuffix(strings.TrimSuffix(envURL, "/"), "/chat/completions")
+	}
+	candidates := []string{envURL, d.ChiikeProxy, ChiikeProxy, LocalChiike, BundledChiike}
+	for _, raw := range candidates {
+		if raw == "" {
+			continue
+		}
+		base := strings.TrimSuffix(raw, "/")
+		var openai struct {
+			Data []struct {
+				ID string `json:"id"`
+			} `json:"data"`
+		}
+		status, err := d.call(ctx, callTimeout, http.MethodGet, base+"/models", nil, &openai)
+		if err == nil && status == http.StatusOK {
+			for _, m := range openai.Data {
+				if strings.Contains(strings.ToLower(m.ID), "chiike") {
+					return studioFound{answered: true, model: m.ID}
+				}
+			}
+			if len(openai.Data) > 0 && openai.Data[0].ID != "" {
+				return studioFound{answered: true, model: openai.Data[0].ID}
+			}
+			return studioFound{answered: true, model: "chiike"}
+		}
+		if raw == envURL && envURL != "" {
+			// If explicitly specified by environment variable, use "chiike" as model even if cold
+			return studioFound{answered: true, model: "chiike"}
+		}
+	}
+	return studioFound{}
 }
 
 // errNoAnswer is a server that didn't answer: nothing listens, or nothing

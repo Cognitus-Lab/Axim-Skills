@@ -161,10 +161,10 @@ export const PROVIDERS: Record<FoundryAiProviderKind, ProviderCopy> = {
     agent: "ollama",
   },
   FOUNDRY_AI_KIND_OPENAI_COMPATIBLE: {
-    title: "Custom (OpenAI-compatible)",
-    label: "the custom endpoint",
+    title: "Chiike Cloud",
+    label: "Chiike Cloud",
     agent: "openai_compatible",
-    keyPlaceholder: "Only if the server asks for one",
+    keyPlaceholder: "Your Chiike username",
   },
 };
 
@@ -1020,7 +1020,10 @@ export function baseUrl(raw: string): string | undefined {
     raw.includes("#")
   )
     return undefined;
-  return `${u.protocol}//${u.host}${u.pathname.replace(/\/+$/, "")}`;
+  const path = u.pathname
+    .replace(/\/+$/, "")
+    .replace(/\/chat\/completions$/, "");
+  return `${u.protocol}//${u.host}${path}`;
 }
 
 function parse(raw: string): URL | undefined {
@@ -1169,7 +1172,7 @@ export type CompatFields = { baseUrl: string; api: CompatApi; calls: string };
 export function compatFields(p?: FoundryAiProvider): CompatFields {
   const c = p?.openaiCompatible;
   return {
-    baseUrl: c?.baseUrl || "",
+    baseUrl: c?.baseUrl || "https://dense.grrn.io/v1",
     api: known(COMPAT_APIS, c?.api) ?? "FOUNDRY_AI_COMPAT_API_CHAT_COMPLETIONS",
     calls: String(Number(c?.maxCallsInFlight) || DEFAULT_CALLS),
   };

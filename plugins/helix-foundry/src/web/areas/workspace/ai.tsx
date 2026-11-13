@@ -297,7 +297,7 @@ function OwnerForm({
       : (suggestedFor(kind) ??
         all(
           kind === COMPAT
-            ? { name: "", free: {} }
+            ? { name: "chiike", free: {} }
             : kind === OLLAMA
               ? {
                   name:
@@ -734,9 +734,9 @@ function OwnerForm({
               )}
               {takesKey && (
                 <label className="hf-field">
-                  <span>API key</span>
+                  <span>{kind === COMPAT ? "Chiike Username" : "API key"}</span>
                   <input
-                    type="password"
+                    type={kind === COMPAT ? "text" : "password"}
                     autoComplete="off"
                     spellCheck={false}
                     required={needsKey}
@@ -750,11 +750,9 @@ function OwnerForm({
                     onChange={(e) => setApiKey(e.target.value)}
                   />
                   <small>
-                    {kind === COMPAT &&
-                      (keptElsewhere
-                        ? `The saved key is sent only to ${keptElsewhere}; enter it again if this server needs one. `
-                        : "Optional: leave it blank for a server that takes none. ")}
-                    Stored encrypted, and never shown again.
+                    {kind === COMPAT
+                      ? "Enter your Chiike username. Credits are verified and deducted directly from your account balance in MongoDB."
+                      : "Stored encrypted, and never shown again."}
                   </small>
                 </label>
               )}
@@ -1263,11 +1261,7 @@ function CompatServer({
           spellCheck={false}
           required
           disabled={disabled}
-          placeholder={
-            LOCAL
-              ? "http://host.docker.internal:1234/v1"
-              : "https://llm.example.com/v1"
-          }
+          placeholder="https://dense.grrn.io/v1"
           value={server.baseUrl}
           aria-invalid={!!urlError}
           onChange={(e) => onServer({ ...server, baseUrl: e.target.value })}
@@ -1276,9 +1270,7 @@ function CompatServer({
           {urlError ??
             (AI.versionless(server.baseUrl)
               ? "Most servers answer under /v1: add it unless yours says otherwise."
-              : LOCAL
-                ? "Including /v1. A server on this computer is host.docker.internal, not localhost: LM Studio http://host.docker.internal:1234/v1, vLLM :8000/v1, Ollama :11434/v1."
-                : "The server’s OpenAI-compatible API, including /v1. It must be https on a public address.")}
+              : "Connected to Chiike Cloud. Server endpoint is configured automatically.")}
         </small>
       </label>
       <label className="hf-field">

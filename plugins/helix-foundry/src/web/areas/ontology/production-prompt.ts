@@ -3,7 +3,7 @@ import { span } from "./goal-prompt";
 import { WHAT_FOUNDRY_IS, addHelixMcp } from "./onboarding-prompt";
 
 // The prompt Getting into production's second step copies for the user's own
-// agent (Claude Code, Codex): add the Helix MCP and have the user sign in,
+// agent (Berry, Claude Code, Codex): add the Helix MCP and have the user sign in,
 // query the ontology through it, then help wire that into the user's own app
 // or agent, asking before each change. It names only the Helix MCP's tools
 // and payloads the onboarding prompt (./onboarding-prompt.ts) names, so keep
@@ -62,7 +62,7 @@ export function productionPrompt({
     "",
     "### 1. Add the Helix MCP",
     "",
-    "You need the Helix MCP, signed in as me. If you don’t have its tools (`helix_list_workspaces` and the rest), add it, and have me sign in. If its tools only appear after a restart, I’ll resume this conversation (`claude --continue`, `codex resume --last`).",
+    "You need the Helix MCP, signed in as me. If you don’t have its tools (`helix_list_workspaces` and the rest), add it, and have me sign in. If its tools only appear after a restart, I’ll resume this conversation (`berry --continue`, `claude --continue`, `codex resume --last`).",
     "",
     ...addHelixMcp(mcpUrl),
     "",

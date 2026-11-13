@@ -165,6 +165,7 @@ export function eventSourcePrompt(input: EventSourcePromptInput): string {
     "",
     "An agent I work with, as you do now, can send as me through its signed-in Helix MCP, if I’m an owner or admin of the workspace. If you don’t have the MCP’s tools (`helix_foundry_send_pieces` and the rest), add it, and have me sign in:",
     "",
+    `- Berry: \`berry mcp add helix ${input.mcpUrl}\` (or in AXIM: enable the \`helix-foundry\` plugin), then start chatting.`,
     `- Claude Code: \`claude mcp add --transport http helix ${input.mcpUrl}\`, then \`/mcp\` to sign in.`,
     `- Codex: \`codex mcp add helix --url ${input.mcpUrl} && codex mcp login helix\`.`,
     "",

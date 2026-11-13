@@ -24,7 +24,7 @@ describe("productionPrompt", () => {
 
   it("adds the MCP as the onboarding prompt does", () => {
     const lines = addHelixMcp("https://mcp.example.com/mcp");
-    expect(lines).toHaveLength(2);
+    expect(lines).toHaveLength(3);
     for (const line of lines) {
       expect(text).toContain(line);
       expect(
@@ -35,6 +35,9 @@ describe("productionPrompt", () => {
         }),
       ).toContain(line);
     }
+    expect(text).toContain(
+      "`berry mcp add helix https://mcp.example.com/mcp`",
+    );
     expect(text).toContain(
       "`claude mcp add --transport http helix https://mcp.example.com/mcp`",
     );

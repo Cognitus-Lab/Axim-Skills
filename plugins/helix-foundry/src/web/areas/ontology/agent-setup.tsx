@@ -23,7 +23,7 @@ export const MCP_URL =
 // Empty on a stamp without the HTTP endpoint (prod, local mode): no HTTP.
 const EVENTS_URL = process.env.NEXT_PUBLIC_HELIX_EVENTS_URL || "";
 const WHAT =
-  "Copy a prompt into Claude Code, Codex or another agent, and it does the setup with you.";
+  "Copy a prompt into Berry, Claude Code, Codex or another agent, and it does the setup with you.";
 
 /**
  * "Set up with your agent", for owners and admins: copies the onboarding
