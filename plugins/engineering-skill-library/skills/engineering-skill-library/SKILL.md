@@ -4,7 +4,7 @@ description: Safely discover, review, import, update, and export external engine
 keywords:
   - engineering skills
   - external skills
-  - claude plugin import
+  - berry plugin import
   - skill library
 ---
 

@@ -5,7 +5,7 @@ Author: Cognitus
 Repository: https://github.com/Cognitus-Lab/Axim-Skills
 License: LGPL-2.1-only / Apache-2.0
 
-Allows Berry, Claude Desktop, Cursor, and any MCP client to perform automated static
+Allows Berry and any MCP client to perform automated static
 analysis, bug discovery, supply-chain auditing, and secret detection over standard JSON-RPC 2.0 stdio.
 """
 

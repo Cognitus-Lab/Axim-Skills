@@ -461,9 +461,9 @@ chat, print it, log it or commit it. With a send token as the bearer, the server
 lists `helix_foundry_send_pieces` alone, `workspace_id` and `event_source_id` may be
 left empty for the token's own, and any other is `not_found`.
 
-The user puts the token in the sender's environment as `HELIX_EVENT_TOKEN`. For
-Claude Code, add the server to the project's `.mcp.json`; Claude Code expands
-`${HELIX_EVENT_TOKEN}` when it starts the server, so the file holds no secret:
+The user puts the token in the sender's environment as `HELIX_EVENT_TOKEN`. In
+Berry, register the server through its MCP connector; Berry expands
+`${HELIX_EVENT_TOKEN}` when it starts the server, so the config holds no secret:
 
 ```json
 {
@@ -477,15 +477,8 @@ Claude Code, add the server to the project's `.mcp.json`; Claude Code expands
 }
 ```
 
-Never add it with `claude mcp add --header`: the shell expands the variable there
-and writes the token into Claude Code's config. For Codex, in
-`~/.codex/config.toml`:
-
-```toml
-[mcp_servers.helix-events]
-url = "https://mcp.helix-db.com/mcp"
-bearer_token_env_var = "HELIX_EVENT_TOKEN"
-```
+Berry reads the token from the environment variable at connect time and never
+persists it in config, so the secret stays out of any file on disk.
 
 The server answers a wrong or revoked token with HTTP 401 (`invalid_token`): the
 user makes another at `token_url`. After 10 failed tokens a minute from one address
