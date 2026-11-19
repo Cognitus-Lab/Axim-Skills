@@ -6,7 +6,7 @@ GRRN PROPRIETARY LICENSE
 AXIM Software and Associated Materials
 Version 1.0 — August 6, 2026
 
-Copyright © 2026 GRRN. All Rights Reserved.
+Copyright © 2026 Cognitus. All Rights Reserved.
 
 
 ---
