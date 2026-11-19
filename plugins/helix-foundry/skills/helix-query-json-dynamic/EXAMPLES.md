@@ -171,9 +171,7 @@ Expected shape:
             "root": {
               "add_n": {
                 "label": "User",
-                "properties": [
-                  ["name", { "value": { "string": "Alice" } }]
-                ]
+                "properties": [["name", { "value": { "string": "Alice" } }]]
               }
             }
           }
@@ -184,9 +182,7 @@ Expected shape:
             "root": {
               "add_n": {
                 "label": "User",
-                "properties": [
-                  ["name", { "value": { "string": "Bob" } }]
-                ]
+                "properties": [["name", { "value": { "string": "Bob" } }]]
               }
             }
           }

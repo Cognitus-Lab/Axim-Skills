@@ -67,7 +67,7 @@ BatchCondition::PrevNotEmpty
 
 ---
 
-## Sources  (`Traversal<Empty>` → `Traversal<On*, _>`)
+## Sources (`Traversal<Empty>` → `Traversal<On*, _>`)
 
 ```text
 // Nodes
@@ -384,7 +384,7 @@ endpoints. Keep `.edge_properties()` for full edge maps and the internal `$from`
 
 ## Row bindings (multi-hop correlation)
 
-`.project(...)` only sees the *final* stream. When you need columns captured at
+`.project(...)` only sees the _final_ stream. When you need columns captured at
 **different hops** of one traversal correlated on the same path, use row
 bindings: tag elements as you pass them with `.bind(name)`, then build the output
 rows with `.project_bindings(...)` / `.project_distinct_bindings(...)`.

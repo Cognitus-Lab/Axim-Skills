@@ -59,149 +59,149 @@ Helix is schema-on-write for labels and properties, but **indexes are explicit**
 
 **`Tenant`** — optional logical container for an org, user, project, or workspace.
 
-| Property | Type | Index | Notes |
-|---|---|---|---|
-| `tenant_id` | String | unique equality | Search partition key and row-scope key. |
-| `name` | String | — | Optional display name. |
-| `createdAt` | DateTime | — | `Expr.datetime()` at insert. |
+| Property    | Type     | Index           | Notes                                   |
+| ----------- | -------- | --------------- | --------------------------------------- |
+| `tenant_id` | String   | unique equality | Search partition key and row-scope key. |
+| `name`      | String   | —               | Optional display name.                  |
+| `createdAt` | DateTime | —               | `Expr.datetime()` at insert.            |
 
 **`User`** — human/user entity inside a tenant.
 
-| Property | Type | Index | Notes |
-|---|---|---|---|
-| `userKey` | String | unique equality | Tenant-qualified key, e.g. `${tenant_id}:${userId}`. |
-| `tenant_id` | String | equality | Tenant scope. |
-| `userId` | String | equality | App/user id, not assumed globally unique. |
-| `name` | String | — | Optional display name. |
-| `createdAt` | DateTime | — | Insert time. |
+| Property    | Type     | Index           | Notes                                                |
+| ----------- | -------- | --------------- | ---------------------------------------------------- |
+| `userKey`   | String   | unique equality | Tenant-qualified key, e.g. `${tenant_id}:${userId}`. |
+| `tenant_id` | String   | equality        | Tenant scope.                                        |
+| `userId`    | String   | equality        | App/user id, not assumed globally unique.            |
+| `name`      | String   | —               | Optional display name.                               |
+| `createdAt` | DateTime | —               | Insert time.                                         |
 
 **`UserProfile`** — maintained summary/context provider for a user or container.
 
-| Property | Type | Index | Notes |
-|---|---|---|---|
-| `profileId` | String | unique equality | Stable profile id. |
-| `tenant_id` | String | equality | Tenant scope. |
-| `userId` | String | equality | User/container id. |
-| `staticSummary` | String | text optional | Long-lived facts/preferences/background. |
-| `dynamicSummary` | String | text optional | Current projects, short-term goals, recent state. |
-| `updatedAt` | DateTime | — | Last summariser update. |
+| Property         | Type     | Index           | Notes                                             |
+| ---------------- | -------- | --------------- | ------------------------------------------------- |
+| `profileId`      | String   | unique equality | Stable profile id.                                |
+| `tenant_id`      | String   | equality        | Tenant scope.                                     |
+| `userId`         | String   | equality        | User/container id.                                |
+| `staticSummary`  | String   | text optional   | Long-lived facts/preferences/background.          |
+| `dynamicSummary` | String   | text optional   | Current projects, short-term goals, recent state. |
+| `updatedAt`      | DateTime | —               | Last summariser update.                           |
 
 **`SourceDocument`** — raw ingested context: text, URL, file, connector document, or conversation transcript.
 
-| Property | Type | Index | Notes |
-|---|---|---|---|
-| `documentId` | String | unique equality | Stable source id. |
-| `tenant_id` | String | equality | Tenant scope. |
-| `userId` | String | equality optional | Owner when the document is user/container-specific. Required by the default examples. |
-| `scopeId` | String | equality optional | Project/workspace/container scope when `userId` is not the right visibility key. |
-| `visibility` | String | equality optional | `user`, `container`, `tenant`, or app-specific. Do not omit scope for private documents. |
-| `sourceType` | String | equality optional | `text`, `chat`, `pdf`, `url`, `connector`, etc. |
-| `title` | String | text optional | Display/source title. |
-| `uri` | String | equality optional | URL, file path, connector resource id. |
-| `checksum` | String | equality optional | Idempotent ingestion/update detection. |
-| `status` | String | equality optional | `queued`, `extracting`, `chunking`, `indexed`, `failed`. |
-| `createdAt` / `updatedAt` | DateTime | — | Lifecycle timestamps. |
-| `deletedAt` | DateTime | — | Soft-delete tombstone. |
+| Property                  | Type     | Index             | Notes                                                                                    |
+| ------------------------- | -------- | ----------------- | ---------------------------------------------------------------------------------------- |
+| `documentId`              | String   | unique equality   | Stable source id.                                                                        |
+| `tenant_id`               | String   | equality          | Tenant scope.                                                                            |
+| `userId`                  | String   | equality optional | Owner when the document is user/container-specific. Required by the default examples.    |
+| `scopeId`                 | String   | equality optional | Project/workspace/container scope when `userId` is not the right visibility key.         |
+| `visibility`              | String   | equality optional | `user`, `container`, `tenant`, or app-specific. Do not omit scope for private documents. |
+| `sourceType`              | String   | equality optional | `text`, `chat`, `pdf`, `url`, `connector`, etc.                                          |
+| `title`                   | String   | text optional     | Display/source title.                                                                    |
+| `uri`                     | String   | equality optional | URL, file path, connector resource id.                                                   |
+| `checksum`                | String   | equality optional | Idempotent ingestion/update detection.                                                   |
+| `status`                  | String   | equality optional | `queued`, `extracting`, `chunking`, `indexed`, `failed`.                                 |
+| `createdAt` / `updatedAt` | DateTime | —                 | Lifecycle timestamps.                                                                    |
+| `deletedAt`               | DateTime | —                 | Soft-delete tombstone.                                                                   |
 
 **`Chunk`** — searchable source-grounded RAG unit.
 
-| Property | Type | Index | Notes |
-|---|---|---|---|
-| `chunkId` | String | unique equality | Stable chunk id. |
-| `tenant_id` | String | equality | Tenant scope. |
-| `userId` | String | equality optional | Owner copied from the source document for default user-scoped recall. |
-| `scopeId` | String | equality optional | Project/workspace/container scope copied from the source document. |
-| `visibility` | String | equality optional | `user`, `container`, `tenant`, or app-specific. |
-| `documentId` | String | equality | Source pointer. |
-| `content` | String | **text (BM25), tenant_property `tenant_id`** | Chunk text. |
-| `embedding` | F32Array | **vector, tenant_property `tenant_id`** | Client-computed embedding of `content`. Default: OpenAI `text-embedding-3-small`, 1536 dims. |
-| `embeddingModel` | String | — | Optional per-record audit value, e.g. `openai:text-embedding-3-small`. Usually also stored in app config. |
-| `embeddingDim` | I64 | — | Optional per-record audit value. Default `1536`. |
-| `ordinal` | I64 | range optional | Position in document. |
-| `metadata` | Object | — | Non-indexed source metadata, connector payload details, or display/audit fields. Keep frequently filtered/searchable fields top-level or model them as graph edges. |
-| `createdAt` / `updatedAt` | DateTime | — | Lifecycle timestamps. |
-| `deletedAt` | DateTime | — | Soft-delete tombstone. |
+| Property                  | Type     | Index                                        | Notes                                                                                                                                                               |
+| ------------------------- | -------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `chunkId`                 | String   | unique equality                              | Stable chunk id.                                                                                                                                                    |
+| `tenant_id`               | String   | equality                                     | Tenant scope.                                                                                                                                                       |
+| `userId`                  | String   | equality optional                            | Owner copied from the source document for default user-scoped recall.                                                                                               |
+| `scopeId`                 | String   | equality optional                            | Project/workspace/container scope copied from the source document.                                                                                                  |
+| `visibility`              | String   | equality optional                            | `user`, `container`, `tenant`, or app-specific.                                                                                                                     |
+| `documentId`              | String   | equality                                     | Source pointer.                                                                                                                                                     |
+| `content`                 | String   | **text (BM25), tenant_property `tenant_id`** | Chunk text.                                                                                                                                                         |
+| `embedding`               | F32Array | **vector, tenant_property `tenant_id`**      | Client-computed embedding of `content`. Default: OpenAI `text-embedding-3-small`, 1536 dims.                                                                        |
+| `embeddingModel`          | String   | —                                            | Optional per-record audit value, e.g. `openai:text-embedding-3-small`. Usually also stored in app config.                                                           |
+| `embeddingDim`            | I64      | —                                            | Optional per-record audit value. Default `1536`.                                                                                                                    |
+| `ordinal`                 | I64      | range optional                               | Position in document.                                                                                                                                               |
+| `metadata`                | Object   | —                                            | Non-indexed source metadata, connector payload details, or display/audit fields. Keep frequently filtered/searchable fields top-level or model them as graph edges. |
+| `createdAt` / `updatedAt` | DateTime | —                                            | Lifecycle timestamps.                                                                                                                                               |
+| `deletedAt`               | DateTime | —                                            | Soft-delete tombstone.                                                                                                                                              |
 
 **`Memory`** — extracted/evolved memory fact.
 
-| Property | Type | Index | Notes |
-|---|---|---|---|
-| `memoryId` | String | unique equality | App-generated stable id (uuid or content hash). |
-| `tenant_id` | String | equality | Tenant scope and search partition value. |
-| `userId` | String | equality | User/container id for profile grouping. |
-| `scopeId` | String | equality optional | Project/workspace/container scope if recall is not purely per-user. |
-| `visibility` | String | equality optional | `user`, `container`, `tenant`, or app-specific shared/private policy. |
-| `content` | String | **text (BM25), tenant_property `tenant_id`** | Human-readable memory text. |
-| `embedding` | F32Array | **vector, tenant_property `tenant_id`** | Client-computed embedding of `content`. Default: OpenAI `text-embedding-3-small`, 1536 dims. |
-| `embeddingModel` | String | — | Optional per-record audit value, e.g. `openai:text-embedding-3-small`. Usually also stored in app config. |
-| `embeddingDim` | I64 | — | Optional per-record audit value. Default `1536`. |
-| `kind` | String | equality optional | `fact`, `preference`, `episode`, `procedure`, or app-specific. |
-| `salience` | F64 | range optional | Importance 0..1; drives reranking and decay. |
-| `confidence` | F64 | range optional | Extraction/classification confidence. |
-| `isLatest` | Bool | equality optional | `true` for current version. Recall filters to true. |
-| `isStatic` | Bool | equality optional | Permanent/identity-like memory for profile behaviour. |
-| `inferred` | Bool | equality optional | True for `DERIVES` outputs. |
-| `createdAt` | DateTime | — | Insert time. |
-| `updatedAt` | DateTime | — | Last content/embedding change. |
-| `lastAccessedAt` | DateTime | — | Bumped on reinforcement. |
-| `accessCount` | I64 | — | Bumped on reinforcement. |
-| `validFrom` / `validTo` | DateTime | — | Record lifecycle validity; `validTo` is set when superseded/invalidated. Do not use these as event dates. |
-| `expiresAt` | DateTime | range optional | Optional expiry target for sweeps. |
-| `deletedAt` | DateTime | — | Soft-delete tombstone. Every recall filters this null. |
-| `sourceSessionId` | String | equality optional | Conversation/session provenance. |
-| `sourceMessageId` | String | equality optional | Specific chat message provenance when available. |
-| `documentId` / `chunkId` | String | equality optional | Source/citation pointer. |
-| `observedAt` | DateTime | range optional | When the app observed or extracted the fact, if different from `createdAt`. |
-| `eventStartAt` / `eventEndAt` | DateTime | range optional | Real-world time window the memory is about, such as a trip or appointment. |
-| `temporalText` | String | — | Original normalized time phrase, e.g. `next April`, when exact dates are unknown. |
-| `timezone` | String | — | Timezone used to resolve relative times. |
+| Property                      | Type     | Index                                        | Notes                                                                                                     |
+| ----------------------------- | -------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `memoryId`                    | String   | unique equality                              | App-generated stable id (uuid or content hash).                                                           |
+| `tenant_id`                   | String   | equality                                     | Tenant scope and search partition value.                                                                  |
+| `userId`                      | String   | equality                                     | User/container id for profile grouping.                                                                   |
+| `scopeId`                     | String   | equality optional                            | Project/workspace/container scope if recall is not purely per-user.                                       |
+| `visibility`                  | String   | equality optional                            | `user`, `container`, `tenant`, or app-specific shared/private policy.                                     |
+| `content`                     | String   | **text (BM25), tenant_property `tenant_id`** | Human-readable memory text.                                                                               |
+| `embedding`                   | F32Array | **vector, tenant_property `tenant_id`**      | Client-computed embedding of `content`. Default: OpenAI `text-embedding-3-small`, 1536 dims.              |
+| `embeddingModel`              | String   | —                                            | Optional per-record audit value, e.g. `openai:text-embedding-3-small`. Usually also stored in app config. |
+| `embeddingDim`                | I64      | —                                            | Optional per-record audit value. Default `1536`.                                                          |
+| `kind`                        | String   | equality optional                            | `fact`, `preference`, `episode`, `procedure`, or app-specific.                                            |
+| `salience`                    | F64      | range optional                               | Importance 0..1; drives reranking and decay.                                                              |
+| `confidence`                  | F64      | range optional                               | Extraction/classification confidence.                                                                     |
+| `isLatest`                    | Bool     | equality optional                            | `true` for current version. Recall filters to true.                                                       |
+| `isStatic`                    | Bool     | equality optional                            | Permanent/identity-like memory for profile behaviour.                                                     |
+| `inferred`                    | Bool     | equality optional                            | True for `DERIVES` outputs.                                                                               |
+| `createdAt`                   | DateTime | —                                            | Insert time.                                                                                              |
+| `updatedAt`                   | DateTime | —                                            | Last content/embedding change.                                                                            |
+| `lastAccessedAt`              | DateTime | —                                            | Bumped on reinforcement.                                                                                  |
+| `accessCount`                 | I64      | —                                            | Bumped on reinforcement.                                                                                  |
+| `validFrom` / `validTo`       | DateTime | —                                            | Record lifecycle validity; `validTo` is set when superseded/invalidated. Do not use these as event dates. |
+| `expiresAt`                   | DateTime | range optional                               | Optional expiry target for sweeps.                                                                        |
+| `deletedAt`                   | DateTime | —                                            | Soft-delete tombstone. Every recall filters this null.                                                    |
+| `sourceSessionId`             | String   | equality optional                            | Conversation/session provenance.                                                                          |
+| `sourceMessageId`             | String   | equality optional                            | Specific chat message provenance when available.                                                          |
+| `documentId` / `chunkId`      | String   | equality optional                            | Source/citation pointer.                                                                                  |
+| `observedAt`                  | DateTime | range optional                               | When the app observed or extracted the fact, if different from `createdAt`.                               |
+| `eventStartAt` / `eventEndAt` | DateTime | range optional                               | Real-world time window the memory is about, such as a trip or appointment.                                |
+| `temporalText`                | String   | —                                            | Original normalized time phrase, e.g. `next April`, when exact dates are unknown.                         |
+| `timezone`                    | String   | —                                            | Timezone used to resolve relative times.                                                                  |
 
 **`Category`** — topic taxonomy scoped to a tenant.
 
-| Property | Type | Index | Notes |
-|---|---|---|---|
+| Property      | Type   | Index           | Notes                             |
+| ------------- | ------ | --------------- | --------------------------------- |
 | `categoryKey` | String | unique equality | `${tenant_id}:${normalisedName}`. |
-| `tenant_id` | String | equality | Tenant scope. |
-| `name` | String | equality | Display name. |
-| `description` | String | — | Optional. |
+| `tenant_id`   | String | equality        | Tenant scope.                     |
+| `name`        | String | equality        | Display name.                     |
+| `description` | String | —               | Optional.                         |
 
 **`Entity`** — people/places/things mentioned, scoped to a tenant.
 
-| Property | Type | Index | Notes |
-|---|---|---|---|
-| `entityKey` | String | unique equality | `${tenant_id}:${normalisedName}`. |
-| `tenant_id` | String | equality | Tenant scope. |
-| `name` | String | equality | Display name. |
-| `entityType` | String | equality optional | Person/org/place/product/etc. |
+| Property     | Type   | Index             | Notes                             |
+| ------------ | ------ | ----------------- | --------------------------------- |
+| `entityKey`  | String | unique equality   | `${tenant_id}:${normalisedName}`. |
+| `tenant_id`  | String | equality          | Tenant scope.                     |
+| `name`       | String | equality          | Display name.                     |
+| `entityType` | String | equality optional | Person/org/place/product/etc.     |
 
 **`Session`** — episodic provenance.
 
-| Property | Type | Index | Notes |
-|---|---|---|---|
-| `sessionId` | String | unique equality | Stable conversation/session id. |
-| `tenant_id` | String | equality | Tenant scope. |
-| `userId` | String | equality optional | Associated user/container. |
-| `startedAt` / `endedAt` | DateTime | — | Session bounds. |
+| Property                | Type     | Index             | Notes                           |
+| ----------------------- | -------- | ----------------- | ------------------------------- |
+| `sessionId`             | String   | unique equality   | Stable conversation/session id. |
+| `tenant_id`             | String   | equality          | Tenant scope.                   |
+| `userId`                | String   | equality optional | Associated user/container.      |
+| `startedAt` / `endedAt` | DateTime | —                 | Session bounds.                 |
 
 **`Connector`** and **`IngestionJob`** are optional operational nodes. Use them to model OAuth/provider state, sync cursors, document limits, job status, error messages, and schedule metadata when building connector-backed ingestion.
 
 ### Edges
 
-| Edge | From → To | Properties | Purpose |
-|---|---|---|---|
-| `OWNS` | Tenant/User → Memory | `tenant_id`, `createdAt` | Ownership and user memory listing. |
-| `HAS_PROFILE` | User → UserProfile | `tenant_id` | User profile lookup via graph. |
-| `HAS_DOCUMENT` | Tenant/User → SourceDocument | `tenant_id` | Source ownership. |
-| `HAS_CHUNK` | SourceDocument → Chunk | `tenant_id`, `ordinal` | Document-to-chunk provenance. |
-| `EXTRACTED_FROM` | Memory → Chunk or SourceDocument | `tenant_id`, `confidence` | Citation/source traceability. |
-| `IN_CATEGORY` | Memory → Category | `tenant_id`, `confidence` | Topic categorisation. |
-| `MENTIONS` | Memory/Chunk → Entity | `tenant_id`, `role` | Entity-centric recall and expansion. |
-| `UPDATES` | Memory → Memory | `tenant_id`, `reason`, `at` | New memory replaces/contradicts old. |
-| `EXTENDS` | Memory → Memory | `tenant_id`, `confidence`, `at` | New memory enriches old without replacing it. |
-| `DERIVES` | Memory → Memory | `tenant_id`, `confidence`, `at` | Inferred memory derived from support. |
-| `RELATES_TO` | Memory → Memory | `tenant_id`, `kind`, `confidence` | Association/consolidation cluster. |
-| `DERIVED_FROM` | Memory → Session | `tenant_id` | Conversation/session provenance. |
-| `PARENT_OF` | Category → Category | `tenant_id` | Optional hierarchical taxonomy. |
+| Edge             | From → To                        | Properties                        | Purpose                                       |
+| ---------------- | -------------------------------- | --------------------------------- | --------------------------------------------- |
+| `OWNS`           | Tenant/User → Memory             | `tenant_id`, `createdAt`          | Ownership and user memory listing.            |
+| `HAS_PROFILE`    | User → UserProfile               | `tenant_id`                       | User profile lookup via graph.                |
+| `HAS_DOCUMENT`   | Tenant/User → SourceDocument     | `tenant_id`                       | Source ownership.                             |
+| `HAS_CHUNK`      | SourceDocument → Chunk           | `tenant_id`, `ordinal`            | Document-to-chunk provenance.                 |
+| `EXTRACTED_FROM` | Memory → Chunk or SourceDocument | `tenant_id`, `confidence`         | Citation/source traceability.                 |
+| `IN_CATEGORY`    | Memory → Category                | `tenant_id`, `confidence`         | Topic categorisation.                         |
+| `MENTIONS`       | Memory/Chunk → Entity            | `tenant_id`, `role`               | Entity-centric recall and expansion.          |
+| `UPDATES`        | Memory → Memory                  | `tenant_id`, `reason`, `at`       | New memory replaces/contradicts old.          |
+| `EXTENDS`        | Memory → Memory                  | `tenant_id`, `confidence`, `at`   | New memory enriches old without replacing it. |
+| `DERIVES`        | Memory → Memory                  | `tenant_id`, `confidence`, `at`   | Inferred memory derived from support.         |
+| `RELATES_TO`     | Memory → Memory                  | `tenant_id`, `kind`, `confidence` | Association/consolidation cluster.            |
+| `DERIVED_FROM`   | Memory → Session                 | `tenant_id`                       | Conversation/session provenance.              |
+| `PARENT_OF`      | Category → Category              | `tenant_id`                       | Optional hierarchical taxonomy.               |
 
 ### Index Bootstrap
 
@@ -263,17 +263,17 @@ policy because they appeared in a tenant-scoped search result.
 
 ## Modality Cheat-Sheet
 
-| Question | Mechanism | Builder |
-|---|---|---|
-| Which tenant/user/exact memory? | property + equality index | `nWithLabelWhere("Memory", SourcePredicate.eq("tenant_id", p.tenant_id))` |
-| Which user/container can see it? | scope properties + app ACL | `Predicate.eqParam("userId", "userId")` or app-specific `scopeId`/ACL filtering |
-| Is this current and recallable? | lifecycle properties | `where(Predicate.isNull("deletedAt"))`, `Predicate.eq("isLatest", true)`, `Predicate.isNull("validTo")` |
-| What category/entity/source/session relates these? | edges | `out("IN_CATEGORY")`, `out("MENTIONS")`, `out("EXTRACTED_FROM")`, `out("DERIVED_FROM")` |
-| Did information change? | version edges | `out("UPDATES")`, `in("UPDATES")`, plus `isLatest`/`validTo` |
-| What is semantically similar/already known? | vector | `nWithLabel("Memory").where(visibility).vectorSearchWith("Memory", "embedding", p.embedding, p.k, p.tenant_id)` |
-| What contains exact words/names/ids? | BM25 text | `nWithLabel("Memory").where(visibility).textSearchWith("Memory", "content", p.query, p.k, p.tenant_id)` |
-| What source passages support this? | chunk search + provenance edges | search `Chunk`, then `in("EXTRACTED_FROM")` or `out("HAS_CHUNK")` |
-| What should the model always know? | profile node | lookup `UserProfile` by `tenant_id` + `userId` |
+| Question                                           | Mechanism                       | Builder                                                                                                         |
+| -------------------------------------------------- | ------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Which tenant/user/exact memory?                    | property + equality index       | `nWithLabelWhere("Memory", SourcePredicate.eq("tenant_id", p.tenant_id))`                                       |
+| Which user/container can see it?                   | scope properties + app ACL      | `Predicate.eqParam("userId", "userId")` or app-specific `scopeId`/ACL filtering                                 |
+| Is this current and recallable?                    | lifecycle properties            | `where(Predicate.isNull("deletedAt"))`, `Predicate.eq("isLatest", true)`, `Predicate.isNull("validTo")`         |
+| What category/entity/source/session relates these? | edges                           | `out("IN_CATEGORY")`, `out("MENTIONS")`, `out("EXTRACTED_FROM")`, `out("DERIVED_FROM")`                         |
+| Did information change?                            | version edges                   | `out("UPDATES")`, `in("UPDATES")`, plus `isLatest`/`validTo`                                                    |
+| What is semantically similar/already known?        | vector                          | `nWithLabel("Memory").where(visibility).vectorSearchWith("Memory", "embedding", p.embedding, p.k, p.tenant_id)` |
+| What contains exact words/names/ids?               | BM25 text                       | `nWithLabel("Memory").where(visibility).textSearchWith("Memory", "content", p.query, p.k, p.tenant_id)`         |
+| What source passages support this?                 | chunk search + provenance edges | search `Chunk`, then `in("EXTRACTED_FROM")` or `out("HAS_CHUNK")`                                               |
+| What should the model always know?                 | profile node                    | lookup `UserProfile` by `tenant_id` + `userId`                                                                  |
 
 `$distance` (smaller is closer) identifies vector rank; `$score` (larger is
 better) identifies BM25 rank. Each is available immediately after its search
@@ -343,9 +343,18 @@ Minimal extractor output shape:
   "salience": 0.72,
   "confidence": 0.86,
   "entities": ["Maya", "Japan"],
-  "scope": { "tenant_id": "tenant_123", "userId": "user_456", "visibility": "user" },
+  "scope": {
+    "tenant_id": "tenant_123",
+    "userId": "user_456",
+    "visibility": "user"
+  },
   "source": { "sessionId": "sess_789", "messageId": "msg_012" },
-  "temporal": { "temporalText": null, "eventStartAt": null, "eventEndAt": null, "timezone": "UTC" },
+  "temporal": {
+    "temporalText": null,
+    "eventStartAt": null,
+    "eventEndAt": null,
+    "timezone": "UTC"
+  },
   "relationship": { "type": "EXTENDS", "targetMemoryId": "mem_trip_japan" }
 }
 ```
@@ -364,13 +373,13 @@ Recommended adjudication input:
 
 Relationship decisions:
 
-| Decision | Use When | Write Behaviour |
-|---|---|---|
-| `duplicate` | Candidate says the same durable fact as an existing current memory. | Reinforce existing memory; do not add a new fact. |
-| `UPDATES` | Candidate corrects, contradicts, or replaces an older fact. | Create new memory, link `new -UPDATES-> old`, set old `isLatest=false` and `validTo`. |
-| `EXTENDS` | Candidate adds details without replacing the old fact. | Create new memory and link `new -EXTENDS-> existing`. |
-| `DERIVES` | Candidate is inferred from multiple supporting memories. | Create inferred memory and link supporting facts with `DERIVES`. |
-| `new` | No equivalent, replacement, or extension relationship applies. | Create standalone memory with provenance edges. |
+| Decision    | Use When                                                            | Write Behaviour                                                                       |
+| ----------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `duplicate` | Candidate says the same durable fact as an existing current memory. | Reinforce existing memory; do not add a new fact.                                     |
+| `UPDATES`   | Candidate corrects, contradicts, or replaces an older fact.         | Create new memory, link `new -UPDATES-> old`, set old `isLatest=false` and `validTo`. |
+| `EXTENDS`   | Candidate adds details without replacing the old fact.              | Create new memory and link `new -EXTENDS-> existing`.                                 |
+| `DERIVES`   | Candidate is inferred from multiple supporting memories.            | Create inferred memory and link supporting facts with `DERIVES`.                      |
+| `new`       | No equivalent, replacement, or extension relationship applies.      | Create standalone memory with provenance edges.                                       |
 
 Tune thresholds per embedding model, but make the final write decision with explicit relationship classification. Re-run the adjudicator when the embedding model, normalization, chunking, or memory text format changes.
 
@@ -426,21 +435,21 @@ Never include embedding arrays in normal responses.
 
 ## TypeScript ↔ Rust API Mapping
 
-| TypeScript (`@helix-db/helix-db`) | Rust DSL | Notes |
-|---|---|---|
-| `readBatch()` / `writeBatch()` | `read_batch()` / `write_batch()` | |
-| `g()` | `g()` | empty traversal source |
-| `.varAs(name, t)` / `.varAsIf(name, cond, t)` | `.var_as(...)` / `.var_as_if(...)` | branch on `BatchCondition` |
-| `BatchCondition.varEmpty/varNotEmpty(name)` | `BatchCondition::VarEmpty/VarNotEmpty(name)` | only tests emptiness/size, not value thresholds |
-| `.nWithLabelWhere("Memory", SourcePredicate.eq("tenant_id", p.tenant_id))` | `.n_with_label_where(...)` / `g().n_with_label("Memory").where_(Predicate::eq_param(...))` | indexed anchor |
-| `.where(Predicate.isNull("deletedAt"))` | `.where_(Predicate::is_null(...))` | post-source filter |
-| `.vectorSearchNodesWith(label, prop, p.vec, p.k, p.tenant_id)` | `.vector_search_nodes_with(label, prop, PropertyInput::param("vec"), Expr::param("k"), Some(PropertyInput::param("tenant_id")))` | tenant arg last |
-| `.vectorSearchWith(label, prop, p.vec, p.k, p.tenant_id)` | `.vector_search_with(...)` | exact vector membership over the current node/edge stream |
-| `.textSearchWith(label, prop, p.q, p.k, p.tenant_id)` | `.text_search_with(...)` | exact BM25 over the current node/edge stream |
-| `.addN("Memory", { ... })` | `.add_n("Memory", vec![("k", ...)])` | TS takes an object map |
-| `.addE("OWNS", NodeRef.var("mem"), { tenant_id: p.tenant_id })` | `.add_e("OWNS", NodeRef::var("mem"), vec![("tenant_id", ...)])` | put tenant scope on edges |
-| `.setProperty("lastAccessedAt", Expr.datetime())` | `.set_property("lastAccessedAt", Expr::datetime())` | typed DateTime |
-| `Expr.prop("accessCount").add(Expr.val(1))` | `Expr::prop("accessCount").add(Expr::val(1))` | increment |
-| `.drop()` / `.dropEdgeById(...)` | `.drop()` / `.drop_edge_by_id(...)` | `dropEdgeById` is surgical on multigraphs |
-| `createIndexIfNotExists(IndexSpec.nodeVector(...))` | `create_index_if_not_exists(IndexSpec::node_vector(...))` | prefer explicit `IndexSpec` in examples |
-| `param.string()/i64()/f64()/array(param.f32())/dateTime()` | `#[query] pub fn route(...) -> ReadBatch` | parameterisation + transport |
+| TypeScript (`@helix-db/helix-db`)                                          | Rust DSL                                                                                                                         | Notes                                                     |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `readBatch()` / `writeBatch()`                                             | `read_batch()` / `write_batch()`                                                                                                 |                                                           |
+| `g()`                                                                      | `g()`                                                                                                                            | empty traversal source                                    |
+| `.varAs(name, t)` / `.varAsIf(name, cond, t)`                              | `.var_as(...)` / `.var_as_if(...)`                                                                                               | branch on `BatchCondition`                                |
+| `BatchCondition.varEmpty/varNotEmpty(name)`                                | `BatchCondition::VarEmpty/VarNotEmpty(name)`                                                                                     | only tests emptiness/size, not value thresholds           |
+| `.nWithLabelWhere("Memory", SourcePredicate.eq("tenant_id", p.tenant_id))` | `.n_with_label_where(...)` / `g().n_with_label("Memory").where_(Predicate::eq_param(...))`                                       | indexed anchor                                            |
+| `.where(Predicate.isNull("deletedAt"))`                                    | `.where_(Predicate::is_null(...))`                                                                                               | post-source filter                                        |
+| `.vectorSearchNodesWith(label, prop, p.vec, p.k, p.tenant_id)`             | `.vector_search_nodes_with(label, prop, PropertyInput::param("vec"), Expr::param("k"), Some(PropertyInput::param("tenant_id")))` | tenant arg last                                           |
+| `.vectorSearchWith(label, prop, p.vec, p.k, p.tenant_id)`                  | `.vector_search_with(...)`                                                                                                       | exact vector membership over the current node/edge stream |
+| `.textSearchWith(label, prop, p.q, p.k, p.tenant_id)`                      | `.text_search_with(...)`                                                                                                         | exact BM25 over the current node/edge stream              |
+| `.addN("Memory", { ... })`                                                 | `.add_n("Memory", vec![("k", ...)])`                                                                                             | TS takes an object map                                    |
+| `.addE("OWNS", NodeRef.var("mem"), { tenant_id: p.tenant_id })`            | `.add_e("OWNS", NodeRef::var("mem"), vec![("tenant_id", ...)])`                                                                  | put tenant scope on edges                                 |
+| `.setProperty("lastAccessedAt", Expr.datetime())`                          | `.set_property("lastAccessedAt", Expr::datetime())`                                                                              | typed DateTime                                            |
+| `Expr.prop("accessCount").add(Expr.val(1))`                                | `Expr::prop("accessCount").add(Expr::val(1))`                                                                                    | increment                                                 |
+| `.drop()` / `.dropEdgeById(...)`                                           | `.drop()` / `.drop_edge_by_id(...)`                                                                                              | `dropEdgeById` is surgical on multigraphs                 |
+| `createIndexIfNotExists(IndexSpec.nodeVector(...))`                        | `create_index_if_not_exists(IndexSpec::node_vector(...))`                                                                        | prefer explicit `IndexSpec` in examples                   |
+| `param.string()/i64()/f64()/array(param.f32())/dateTime()`                 | `#[query] pub fn route(...) -> ReadBatch`                                                                                        | parameterisation + transport                              |

@@ -202,7 +202,7 @@ required. See `../../docs/error-handling.md`.
 - Use `.value_map(["$id", "name"])` when returning selected properties is fine.
 - For edge endpoint properties, prefer edge-stream `.project([...])` with
   `Projection.from_endpoint(prop, alias)` / `Projection.to_endpoint(prop,
-  alias)` instead of traversing to every endpoint first.
+alias)` instead of traversing to every endpoint first.
 - Avoid returning large properties such as embeddings unless the caller needs them.
 - Match `.returning([...])` names to the response keys your application expects.
 - Preserve inferred empty shapes: at-most-one is `None`,

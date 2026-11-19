@@ -24,9 +24,20 @@ project/team/workspace memory.
 ```ts
 import {
   Client,
-  g, readBatch, writeBatch, defineParams, param,
-  NodeRef, SourcePredicate, Predicate, Expr, CompareOp,
-  IndexSpec, Projection, BatchCondition, VectorDistanceMetric,
+  g,
+  readBatch,
+  writeBatch,
+  defineParams,
+  param,
+  NodeRef,
+  SourcePredicate,
+  Predicate,
+  Expr,
+  CompareOp,
+  IndexSpec,
+  Projection,
+  BatchCondition,
+  VectorDistanceMetric,
 } from "@helix-db/helix-db";
 ```
 
@@ -40,7 +51,11 @@ function currentMemoryPredicate(nowParam = "now") {
     Predicate.isNull("validTo"),
     Predicate.or([
       Predicate.isNull("expiresAt"),
-      Predicate.compare(Expr.prop("expiresAt"), CompareOp.Gt, Expr.param(nowParam)),
+      Predicate.compare(
+        Expr.prop("expiresAt"),
+        CompareOp.Gt,
+        Expr.param(nowParam),
+      ),
     ]),
   ]);
 }
@@ -90,36 +105,178 @@ Relationship: EXTENDS the existing Japan trip memory.
 ```ts
 function bootstrapMemoryIndexes() {
   return writeBatch()
-    .varAs("tenant",      g().createIndexIfNotExists(IndexSpec.nodeUniqueEquality("Tenant", "tenant_id")))
-    .varAs("userKey",     g().createIndexIfNotExists(IndexSpec.nodeUniqueEquality("User", "userKey")))
-    .varAs("userTenant",  g().createIndexIfNotExists(IndexSpec.nodeEquality("User", "tenant_id")))
-    .varAs("userId",      g().createIndexIfNotExists(IndexSpec.nodeEquality("User", "userId")))
-    .varAs("profileId",   g().createIndexIfNotExists(IndexSpec.nodeUniqueEquality("UserProfile", "profileId")))
-    .varAs("profileTen",  g().createIndexIfNotExists(IndexSpec.nodeEquality("UserProfile", "tenant_id")))
-    .varAs("profileUser", g().createIndexIfNotExists(IndexSpec.nodeEquality("UserProfile", "userId")))
-    .varAs("docId",       g().createIndexIfNotExists(IndexSpec.nodeUniqueEquality("SourceDocument", "documentId")))
-    .varAs("docTenant",   g().createIndexIfNotExists(IndexSpec.nodeEquality("SourceDocument", "tenant_id")))
-    .varAs("docUser",     g().createIndexIfNotExists(IndexSpec.nodeEquality("SourceDocument", "userId")))
-    .varAs("docChecksum", g().createIndexIfNotExists(IndexSpec.nodeEquality("SourceDocument", "checksum")))
-    .varAs("chunkId",     g().createIndexIfNotExists(IndexSpec.nodeUniqueEquality("Chunk", "chunkId")))
-    .varAs("chunkTenant", g().createIndexIfNotExists(IndexSpec.nodeEquality("Chunk", "tenant_id")))
-    .varAs("chunkUser",   g().createIndexIfNotExists(IndexSpec.nodeEquality("Chunk", "userId")))
-    .varAs("chunkDoc",    g().createIndexIfNotExists(IndexSpec.nodeEquality("Chunk", "documentId")))
-    .varAs("chunkVec",    g().createIndexIfNotExists(IndexSpec.nodeVector("Chunk", "embedding", DEFAULT_EMBEDDING_DIM, VectorDistanceMetric.Cosine, "tenant_id")))
-    .varAs("chunkText",   g().createIndexIfNotExists(IndexSpec.nodeText("Chunk", "content", "tenant_id")))
-    .varAs("memoryId",    g().createIndexIfNotExists(IndexSpec.nodeUniqueEquality("Memory", "memoryId")))
-    .varAs("memTenant",   g().createIndexIfNotExists(IndexSpec.nodeEquality("Memory", "tenant_id")))
-    .varAs("memUser",     g().createIndexIfNotExists(IndexSpec.nodeEquality("Memory", "userId")))
-    .varAs("memLatest",   g().createIndexIfNotExists(IndexSpec.nodeEquality("Memory", "isLatest")))
-    .varAs("memVector",   g().createIndexIfNotExists(IndexSpec.nodeVector("Memory", "embedding", DEFAULT_EMBEDDING_DIM, VectorDistanceMetric.Cosine, "tenant_id")))
-    .varAs("memText",     g().createIndexIfNotExists(IndexSpec.nodeText("Memory", "content", "tenant_id")))
-    .varAs("catKey",      g().createIndexIfNotExists(IndexSpec.nodeUniqueEquality("Category", "categoryKey")))
-    .varAs("catTenant",   g().createIndexIfNotExists(IndexSpec.nodeEquality("Category", "tenant_id")))
-    .varAs("entKey",      g().createIndexIfNotExists(IndexSpec.nodeUniqueEquality("Entity", "entityKey")))
-    .varAs("entTenant",   g().createIndexIfNotExists(IndexSpec.nodeEquality("Entity", "tenant_id")))
-    .varAs("sessId",      g().createIndexIfNotExists(IndexSpec.nodeUniqueEquality("Session", "sessionId")))
-    .varAs("sessTenant",  g().createIndexIfNotExists(IndexSpec.nodeEquality("Session", "tenant_id")))
-    .varAs("sessUser",    g().createIndexIfNotExists(IndexSpec.nodeEquality("Session", "userId")))
+    .varAs(
+      "tenant",
+      g().createIndexIfNotExists(
+        IndexSpec.nodeUniqueEquality("Tenant", "tenant_id"),
+      ),
+    )
+    .varAs(
+      "userKey",
+      g().createIndexIfNotExists(
+        IndexSpec.nodeUniqueEquality("User", "userKey"),
+      ),
+    )
+    .varAs(
+      "userTenant",
+      g().createIndexIfNotExists(IndexSpec.nodeEquality("User", "tenant_id")),
+    )
+    .varAs(
+      "userId",
+      g().createIndexIfNotExists(IndexSpec.nodeEquality("User", "userId")),
+    )
+    .varAs(
+      "profileId",
+      g().createIndexIfNotExists(
+        IndexSpec.nodeUniqueEquality("UserProfile", "profileId"),
+      ),
+    )
+    .varAs(
+      "profileTen",
+      g().createIndexIfNotExists(
+        IndexSpec.nodeEquality("UserProfile", "tenant_id"),
+      ),
+    )
+    .varAs(
+      "profileUser",
+      g().createIndexIfNotExists(
+        IndexSpec.nodeEquality("UserProfile", "userId"),
+      ),
+    )
+    .varAs(
+      "docId",
+      g().createIndexIfNotExists(
+        IndexSpec.nodeUniqueEquality("SourceDocument", "documentId"),
+      ),
+    )
+    .varAs(
+      "docTenant",
+      g().createIndexIfNotExists(
+        IndexSpec.nodeEquality("SourceDocument", "tenant_id"),
+      ),
+    )
+    .varAs(
+      "docUser",
+      g().createIndexIfNotExists(
+        IndexSpec.nodeEquality("SourceDocument", "userId"),
+      ),
+    )
+    .varAs(
+      "docChecksum",
+      g().createIndexIfNotExists(
+        IndexSpec.nodeEquality("SourceDocument", "checksum"),
+      ),
+    )
+    .varAs(
+      "chunkId",
+      g().createIndexIfNotExists(
+        IndexSpec.nodeUniqueEquality("Chunk", "chunkId"),
+      ),
+    )
+    .varAs(
+      "chunkTenant",
+      g().createIndexIfNotExists(IndexSpec.nodeEquality("Chunk", "tenant_id")),
+    )
+    .varAs(
+      "chunkUser",
+      g().createIndexIfNotExists(IndexSpec.nodeEquality("Chunk", "userId")),
+    )
+    .varAs(
+      "chunkDoc",
+      g().createIndexIfNotExists(IndexSpec.nodeEquality("Chunk", "documentId")),
+    )
+    .varAs(
+      "chunkVec",
+      g().createIndexIfNotExists(
+        IndexSpec.nodeVector(
+          "Chunk",
+          "embedding",
+          DEFAULT_EMBEDDING_DIM,
+          VectorDistanceMetric.Cosine,
+          "tenant_id",
+        ),
+      ),
+    )
+    .varAs(
+      "chunkText",
+      g().createIndexIfNotExists(
+        IndexSpec.nodeText("Chunk", "content", "tenant_id"),
+      ),
+    )
+    .varAs(
+      "memoryId",
+      g().createIndexIfNotExists(
+        IndexSpec.nodeUniqueEquality("Memory", "memoryId"),
+      ),
+    )
+    .varAs(
+      "memTenant",
+      g().createIndexIfNotExists(IndexSpec.nodeEquality("Memory", "tenant_id")),
+    )
+    .varAs(
+      "memUser",
+      g().createIndexIfNotExists(IndexSpec.nodeEquality("Memory", "userId")),
+    )
+    .varAs(
+      "memLatest",
+      g().createIndexIfNotExists(IndexSpec.nodeEquality("Memory", "isLatest")),
+    )
+    .varAs(
+      "memVector",
+      g().createIndexIfNotExists(
+        IndexSpec.nodeVector(
+          "Memory",
+          "embedding",
+          DEFAULT_EMBEDDING_DIM,
+          VectorDistanceMetric.Cosine,
+          "tenant_id",
+        ),
+      ),
+    )
+    .varAs(
+      "memText",
+      g().createIndexIfNotExists(
+        IndexSpec.nodeText("Memory", "content", "tenant_id"),
+      ),
+    )
+    .varAs(
+      "catKey",
+      g().createIndexIfNotExists(
+        IndexSpec.nodeUniqueEquality("Category", "categoryKey"),
+      ),
+    )
+    .varAs(
+      "catTenant",
+      g().createIndexIfNotExists(
+        IndexSpec.nodeEquality("Category", "tenant_id"),
+      ),
+    )
+    .varAs(
+      "entKey",
+      g().createIndexIfNotExists(
+        IndexSpec.nodeUniqueEquality("Entity", "entityKey"),
+      ),
+    )
+    .varAs(
+      "entTenant",
+      g().createIndexIfNotExists(IndexSpec.nodeEquality("Entity", "tenant_id")),
+    )
+    .varAs(
+      "sessId",
+      g().createIndexIfNotExists(
+        IndexSpec.nodeUniqueEquality("Session", "sessionId"),
+      ),
+    )
+    .varAs(
+      "sessTenant",
+      g().createIndexIfNotExists(
+        IndexSpec.nodeEquality("Session", "tenant_id"),
+      ),
+    )
+    .varAs(
+      "sessUser",
+      g().createIndexIfNotExists(IndexSpec.nodeEquality("Session", "userId")),
+    )
     .returning(["memVector", "memText", "chunkVec", "chunkText"]);
 }
 ```
@@ -147,7 +304,20 @@ const ingestChunkParams = defineParams({
 
 function ingestChunk(p = ingestChunkParams) {
   return writeBatch()
-    .varAs("doc", g().nWithLabelWhere("SourceDocument", SourcePredicate.eq("documentId", p.documentId)).where(Predicate.and([Predicate.eqParam("tenant_id", "tenant_id"), Predicate.eqParam("userId", "userId")])))
+    .varAs(
+      "doc",
+      g()
+        .nWithLabelWhere(
+          "SourceDocument",
+          SourcePredicate.eq("documentId", p.documentId),
+        )
+        .where(
+          Predicate.and([
+            Predicate.eqParam("tenant_id", "tenant_id"),
+            Predicate.eqParam("userId", "userId"),
+          ]),
+        ),
+    )
     .varAsIf(
       "docNew",
       BatchCondition.varEmpty("doc"),
@@ -182,8 +352,22 @@ function ingestChunk(p = ingestChunkParams) {
         updatedAt: Expr.datetime(),
       }),
     )
-    .varAsIf("linkDoc",    BatchCondition.varNotEmpty("doc"),    g().n(NodeRef.var("doc")).addE("HAS_CHUNK", NodeRef.var("chunk"), { tenant_id: p.tenant_id, ordinal: p.ordinal }))
-    .varAsIf("linkDocNew", BatchCondition.varNotEmpty("docNew"), g().n(NodeRef.var("docNew")).addE("HAS_CHUNK", NodeRef.var("chunk"), { tenant_id: p.tenant_id, ordinal: p.ordinal }))
+    .varAsIf(
+      "linkDoc",
+      BatchCondition.varNotEmpty("doc"),
+      g().n(NodeRef.var("doc")).addE("HAS_CHUNK", NodeRef.var("chunk"), {
+        tenant_id: p.tenant_id,
+        ordinal: p.ordinal,
+      }),
+    )
+    .varAsIf(
+      "linkDocNew",
+      BatchCondition.varNotEmpty("docNew"),
+      g().n(NodeRef.var("docNew")).addE("HAS_CHUNK", NodeRef.var("chunk"), {
+        tenant_id: p.tenant_id,
+        ordinal: p.ordinal,
+      }),
+    )
     .returning(["chunk"]);
 }
 ```
@@ -243,7 +427,12 @@ const createMemoryParams = defineParams({
 
 function createMemory(p = createMemoryParams) {
   return writeBatch()
-    .varAs("user", g().nWithLabelWhere("User", SourcePredicate.eq("userKey", p.userKey)).where(Predicate.eqParam("tenant_id", "tenant_id")))
+    .varAs(
+      "user",
+      g()
+        .nWithLabelWhere("User", SourcePredicate.eq("userKey", p.userKey))
+        .where(Predicate.eqParam("tenant_id", "tenant_id")),
+    )
     .varAsIf(
       "userNew",
       BatchCondition.varEmpty("user"),
@@ -254,7 +443,20 @@ function createMemory(p = createMemoryParams) {
         createdAt: Expr.datetime(),
       }),
     )
-    .varAs("session", g().nWithLabelWhere("Session", SourcePredicate.eq("sessionId", p.sessionId)).where(Predicate.and([Predicate.eqParam("tenant_id", "tenant_id"), Predicate.eqParam("userId", "userId")])))
+    .varAs(
+      "session",
+      g()
+        .nWithLabelWhere(
+          "Session",
+          SourcePredicate.eq("sessionId", p.sessionId),
+        )
+        .where(
+          Predicate.and([
+            Predicate.eqParam("tenant_id", "tenant_id"),
+            Predicate.eqParam("userId", "userId"),
+          ]),
+        ),
+    )
     .varAsIf(
       "sessionNew",
       BatchCondition.varEmpty("session"),
@@ -290,10 +492,38 @@ function createMemory(p = createMemoryParams) {
         sourceSessionId: p.sessionId,
       }),
     )
-    .varAsIf("own",       BatchCondition.varNotEmpty("user"),       g().n(NodeRef.var("user")).addE("OWNS", NodeRef.var("mem"), { tenant_id: p.tenant_id, createdAt: Expr.datetime() }))
-    .varAsIf("ownNew",    BatchCondition.varNotEmpty("userNew"),    g().n(NodeRef.var("userNew")).addE("OWNS", NodeRef.var("mem"), { tenant_id: p.tenant_id, createdAt: Expr.datetime() }))
-    .varAsIf("fromSess",  BatchCondition.varNotEmpty("session"),    g().n(NodeRef.var("mem")).addE("DERIVED_FROM", NodeRef.var("session"), { tenant_id: p.tenant_id }))
-    .varAsIf("fromSessN", BatchCondition.varNotEmpty("sessionNew"), g().n(NodeRef.var("mem")).addE("DERIVED_FROM", NodeRef.var("sessionNew"), { tenant_id: p.tenant_id }))
+    .varAsIf(
+      "own",
+      BatchCondition.varNotEmpty("user"),
+      g().n(NodeRef.var("user")).addE("OWNS", NodeRef.var("mem"), {
+        tenant_id: p.tenant_id,
+        createdAt: Expr.datetime(),
+      }),
+    )
+    .varAsIf(
+      "ownNew",
+      BatchCondition.varNotEmpty("userNew"),
+      g().n(NodeRef.var("userNew")).addE("OWNS", NodeRef.var("mem"), {
+        tenant_id: p.tenant_id,
+        createdAt: Expr.datetime(),
+      }),
+    )
+    .varAsIf(
+      "fromSess",
+      BatchCondition.varNotEmpty("session"),
+      g().n(NodeRef.var("mem")).addE("DERIVED_FROM", NodeRef.var("session"), {
+        tenant_id: p.tenant_id,
+      }),
+    )
+    .varAsIf(
+      "fromSessN",
+      BatchCondition.varNotEmpty("sessionNew"),
+      g()
+        .n(NodeRef.var("mem"))
+        .addE("DERIVED_FROM", NodeRef.var("sessionNew"), {
+          tenant_id: p.tenant_id,
+        }),
+    )
     .returning(["mem"]);
 }
 ```
@@ -319,15 +549,81 @@ const categoriseParams = defineParams({
 
 function categoriseMemory(p = categoriseParams) {
   return writeBatch()
-    .varAs("mem", g().nWithLabelWhere("Memory", SourcePredicate.eq("memoryId", p.memoryId)).where(Predicate.and([Predicate.eqParam("tenant_id", "tenant_id"), Predicate.eqParam("userId", "userId")])))
-    .varAs("cat", g().nWithLabelWhere("Category", SourcePredicate.eq("categoryKey", p.categoryKey)).where(Predicate.eqParam("tenant_id", "tenant_id")))
-    .varAsIf("catNew", BatchCondition.varEmpty("cat"), g().addN("Category", { categoryKey: p.categoryKey, tenant_id: p.tenant_id, name: p.categoryName }))
-    .varAsIf("linkCat",    BatchCondition.varNotEmpty("cat"),    g().n(NodeRef.var("mem")).addE("IN_CATEGORY", NodeRef.var("cat"), { tenant_id: p.tenant_id, confidence: p.confidence }))
-    .varAsIf("linkCatNew", BatchCondition.varNotEmpty("catNew"), g().n(NodeRef.var("mem")).addE("IN_CATEGORY", NodeRef.var("catNew"), { tenant_id: p.tenant_id, confidence: p.confidence }))
-    .varAs("ent", g().nWithLabelWhere("Entity", SourcePredicate.eq("entityKey", p.entityKey)).where(Predicate.eqParam("tenant_id", "tenant_id")))
-    .varAsIf("entNew", BatchCondition.varEmpty("ent"), g().addN("Entity", { entityKey: p.entityKey, tenant_id: p.tenant_id, name: p.entityName, entityType: p.entityType }))
-    .varAsIf("mentions",    BatchCondition.varNotEmpty("ent"),    g().n(NodeRef.var("mem")).addE("MENTIONS", NodeRef.var("ent"), { tenant_id: p.tenant_id }))
-    .varAsIf("mentionsNew", BatchCondition.varNotEmpty("entNew"), g().n(NodeRef.var("mem")).addE("MENTIONS", NodeRef.var("entNew"), { tenant_id: p.tenant_id }))
+    .varAs(
+      "mem",
+      g()
+        .nWithLabelWhere("Memory", SourcePredicate.eq("memoryId", p.memoryId))
+        .where(
+          Predicate.and([
+            Predicate.eqParam("tenant_id", "tenant_id"),
+            Predicate.eqParam("userId", "userId"),
+          ]),
+        ),
+    )
+    .varAs(
+      "cat",
+      g()
+        .nWithLabelWhere(
+          "Category",
+          SourcePredicate.eq("categoryKey", p.categoryKey),
+        )
+        .where(Predicate.eqParam("tenant_id", "tenant_id")),
+    )
+    .varAsIf(
+      "catNew",
+      BatchCondition.varEmpty("cat"),
+      g().addN("Category", {
+        categoryKey: p.categoryKey,
+        tenant_id: p.tenant_id,
+        name: p.categoryName,
+      }),
+    )
+    .varAsIf(
+      "linkCat",
+      BatchCondition.varNotEmpty("cat"),
+      g().n(NodeRef.var("mem")).addE("IN_CATEGORY", NodeRef.var("cat"), {
+        tenant_id: p.tenant_id,
+        confidence: p.confidence,
+      }),
+    )
+    .varAsIf(
+      "linkCatNew",
+      BatchCondition.varNotEmpty("catNew"),
+      g().n(NodeRef.var("mem")).addE("IN_CATEGORY", NodeRef.var("catNew"), {
+        tenant_id: p.tenant_id,
+        confidence: p.confidence,
+      }),
+    )
+    .varAs(
+      "ent",
+      g()
+        .nWithLabelWhere("Entity", SourcePredicate.eq("entityKey", p.entityKey))
+        .where(Predicate.eqParam("tenant_id", "tenant_id")),
+    )
+    .varAsIf(
+      "entNew",
+      BatchCondition.varEmpty("ent"),
+      g().addN("Entity", {
+        entityKey: p.entityKey,
+        tenant_id: p.tenant_id,
+        name: p.entityName,
+        entityType: p.entityType,
+      }),
+    )
+    .varAsIf(
+      "mentions",
+      BatchCondition.varNotEmpty("ent"),
+      g()
+        .n(NodeRef.var("mem"))
+        .addE("MENTIONS", NodeRef.var("ent"), { tenant_id: p.tenant_id }),
+    )
+    .varAsIf(
+      "mentionsNew",
+      BatchCondition.varNotEmpty("entNew"),
+      g()
+        .n(NodeRef.var("mem"))
+        .addE("MENTIONS", NodeRef.var("entNew"), { tenant_id: p.tenant_id }),
+    )
     .returning(["mem"]);
 }
 ```
@@ -355,7 +651,18 @@ function reinforceMemory(p = reinforceParams) {
         .where(currentUserMemoryPredicate("now", "userId"))
         .setProperty("lastAccessedAt", Expr.datetime())
         .setProperty("accessCount", Expr.prop("accessCount").add(Expr.val(1)))
-        .setProperty("salience", Expr.case([[Predicate.compare(raised, CompareOp.Gt, Expr.val(1.0)), Expr.val(1.0)]], raised)),
+        .setProperty(
+          "salience",
+          Expr.case(
+            [
+              [
+                Predicate.compare(raised, CompareOp.Gt, Expr.val(1.0)),
+                Expr.val(1.0),
+              ],
+            ],
+            raised,
+          ),
+        ),
     )
     .returning(["mem"]);
 }
@@ -378,9 +685,36 @@ const updateParams = defineParams({
 
 function markMemoryUpdated(p = updateParams) {
   return writeBatch()
-    .varAs("old", g().nWithLabelWhere("Memory", SourcePredicate.eq("memoryId", p.oldId)).where(Predicate.and([Predicate.eqParam("tenant_id", "tenant_id"), Predicate.eqParam("userId", "userId")])))
-    .varAs("new", g().nWithLabelWhere("Memory", SourcePredicate.eq("memoryId", p.newId)).where(Predicate.and([Predicate.eqParam("tenant_id", "tenant_id"), Predicate.eqParam("userId", "userId")])))
-    .varAs("link", g().n(NodeRef.var("new")).addE("UPDATES", NodeRef.var("old"), { tenant_id: p.tenant_id, reason: p.reason, at: Expr.datetime() }))
+    .varAs(
+      "old",
+      g()
+        .nWithLabelWhere("Memory", SourcePredicate.eq("memoryId", p.oldId))
+        .where(
+          Predicate.and([
+            Predicate.eqParam("tenant_id", "tenant_id"),
+            Predicate.eqParam("userId", "userId"),
+          ]),
+        ),
+    )
+    .varAs(
+      "new",
+      g()
+        .nWithLabelWhere("Memory", SourcePredicate.eq("memoryId", p.newId))
+        .where(
+          Predicate.and([
+            Predicate.eqParam("tenant_id", "tenant_id"),
+            Predicate.eqParam("userId", "userId"),
+          ]),
+        ),
+    )
+    .varAs(
+      "link",
+      g().n(NodeRef.var("new")).addE("UPDATES", NodeRef.var("old"), {
+        tenant_id: p.tenant_id,
+        reason: p.reason,
+        at: Expr.datetime(),
+      }),
+    )
     .varAs(
       "invalidate",
       g()
@@ -399,7 +733,11 @@ function markMemoryUpdated(p = updateParams) {
 Soft-delete is preferred; reads filter it out.
 
 ```ts
-const softDeleteParams = defineParams({ tenant_id: param.string(), userId: param.string(), memoryId: param.string() });
+const softDeleteParams = defineParams({
+  tenant_id: param.string(),
+  userId: param.string(),
+  memoryId: param.string(),
+});
 
 function softDeleteMemory(p = softDeleteParams) {
   return writeBatch()
@@ -407,7 +745,12 @@ function softDeleteMemory(p = softDeleteParams) {
       "mem",
       g()
         .nWithLabelWhere("Memory", SourcePredicate.eq("memoryId", p.memoryId))
-        .where(Predicate.and([Predicate.eqParam("tenant_id", "tenant_id"), Predicate.eqParam("userId", "userId")]))
+        .where(
+          Predicate.and([
+            Predicate.eqParam("tenant_id", "tenant_id"),
+            Predicate.eqParam("userId", "userId"),
+          ]),
+        )
         .setProperty("deletedAt", Expr.datetime()),
     )
     .returning(["mem"]);
@@ -428,13 +771,27 @@ function decaySweep(p = decayParams) {
       "decayed",
       g()
         .nWithLabelWhere("Memory", SourcePredicate.eq("tenant_id", p.tenant_id))
-        .where(Predicate.and([
-          Predicate.isNull("deletedAt"),
-          Predicate.eq("isLatest", true),
-          Predicate.compare(Expr.prop("lastAccessedAt"), CompareOp.Lt, Expr.param("cutoff")),
-          Predicate.compare(Expr.prop("salience"), CompareOp.Lt, Expr.param("minSalience")),
-          Predicate.compare(Expr.prop("accessCount"), CompareOp.Lt, Expr.param("minAccess")),
-        ]))
+        .where(
+          Predicate.and([
+            Predicate.isNull("deletedAt"),
+            Predicate.eq("isLatest", true),
+            Predicate.compare(
+              Expr.prop("lastAccessedAt"),
+              CompareOp.Lt,
+              Expr.param("cutoff"),
+            ),
+            Predicate.compare(
+              Expr.prop("salience"),
+              CompareOp.Lt,
+              Expr.param("minSalience"),
+            ),
+            Predicate.compare(
+              Expr.prop("accessCount"),
+              CompareOp.Lt,
+              Expr.param("minAccess"),
+            ),
+          ]),
+        )
         .setProperty("deletedAt", Expr.datetime()),
     )
     .returning(["decayed"]);
@@ -442,7 +799,10 @@ function decaySweep(p = decayParams) {
 ```
 
 ```ts
-const expiryParams = defineParams({ tenant_id: param.string(), now: param.dateTime() });
+const expiryParams = defineParams({
+  tenant_id: param.string(),
+  now: param.dateTime(),
+});
 
 function expirySweep(p = expiryParams) {
   return writeBatch()
@@ -450,11 +810,17 @@ function expirySweep(p = expiryParams) {
       "expired",
       g()
         .nWithLabelWhere("Memory", SourcePredicate.eq("tenant_id", p.tenant_id))
-        .where(Predicate.and([
-          Predicate.isNull("deletedAt"),
-          Predicate.isNotNull("expiresAt"),
-          Predicate.compare(Expr.prop("expiresAt"), CompareOp.Lt, Expr.param("now")),
-        ]))
+        .where(
+          Predicate.and([
+            Predicate.isNull("deletedAt"),
+            Predicate.isNotNull("expiresAt"),
+            Predicate.compare(
+              Expr.prop("expiresAt"),
+              CompareOp.Lt,
+              Expr.param("now"),
+            ),
+          ]),
+        )
         .setProperty("deletedAt", Expr.datetime()),
     )
     .returning(["expired"]);
@@ -482,7 +848,10 @@ function hybridRecall(p = recallParams) {
     .varAs(
       "profile",
       g()
-        .nWithLabelWhere("UserProfile", SourcePredicate.eq("tenant_id", p.tenant_id))
+        .nWithLabelWhere(
+          "UserProfile",
+          SourcePredicate.eq("tenant_id", p.tenant_id),
+        )
         .where(Predicate.eqParam("userId", "userId"))
         .project([
           Projection.property("staticSummary", "staticSummary"),
@@ -551,14 +920,25 @@ function hybridRecall(p = recallParams) {
           Projection.property("$score", "score"),
         ]),
     )
-    .returning(["profile", "memorySemantic", "memoryKeyword", "chunkSemantic", "chunkKeyword"]);
+    .returning([
+      "profile",
+      "memorySemantic",
+      "memoryKeyword",
+      "chunkSemantic",
+      "chunkKeyword",
+    ]);
 }
 ```
 
 App-side fusion:
 
 ```ts
-type Hit = { id: string; content: string; salience?: number; lastAccessedAt?: number };
+type Hit = {
+  id: string;
+  content: string;
+  salience?: number;
+  lastAccessedAt?: number;
+};
 
 function fuse(lists: Hit[][], k = 60): Hit[] {
   const score = new Map<string, { hit: Hit; s: number }>();
@@ -606,7 +986,12 @@ function expandViaEntities(p = expandParams) {
       "related",
       g()
         .nWithLabelWhere("Memory", SourcePredicate.eq("memoryId", p.memoryId))
-        .where(Predicate.and([Predicate.eqParam("tenant_id", "tenant_id"), Predicate.eqParam("userId", "userId")]))
+        .where(
+          Predicate.and([
+            Predicate.eqParam("tenant_id", "tenant_id"),
+            Predicate.eqParam("userId", "userId"),
+          ]),
+        )
         .out("MENTIONS")
         .in("MENTIONS")
         .dedup()

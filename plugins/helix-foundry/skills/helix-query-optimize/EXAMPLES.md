@@ -41,10 +41,7 @@ readBatch()
   .varAs(
     "users",
     g()
-      .nWithLabelWhere(
-        "User",
-        SourcePredicate.eq("status", "active"),
-      )
+      .nWithLabelWhere("User", SourcePredicate.eq("status", "active"))
       .limit(25)
       .valueMap(["$id", "name"]),
   )
@@ -81,7 +78,9 @@ Serialized request:
                               {
                                 "eq": {
                                   "left": { "property": "status" },
-                                  "right": { "constant": { "string": "active" } }
+                                  "right": {
+                                    "constant": { "string": "active" }
+                                  }
                                 }
                               }
                             ]
@@ -121,9 +120,7 @@ write_batch()
 writeBatch()
   .varAs(
     "index",
-    g().createIndexIfNotExists(
-      IndexSpec.nodeEquality("User", "status"),
-    ),
+    g().createIndexIfNotExists(IndexSpec.nodeEquality("User", "status")),
   )
   .returning(["index"]);
 ```
@@ -166,10 +163,7 @@ Wait for the DDL receipt to become active before benchmarking `active_users`.
 Broader:
 
 ```ts
-g()
-  .nWithLabel("User")
-  .out("FOLLOWS")
-  .valueMap(["$id", "name"])
+g().nWithLabel("User").out("FOLLOWS").valueMap(["$id", "name"]);
 ```
 
 Bounded:
@@ -180,7 +174,7 @@ g()
   .out("FOLLOWS")
   .dedup()
   .limit(25)
-  .valueMap(["$id", "name"])
+  .valueMap(["$id", "name"]);
 ```
 
 If the start user is known, replace the label-wide source with an exact ID or an
@@ -206,12 +200,7 @@ For counts:
 readBatch()
   .varAs(
     "active_count",
-    g()
-      .nWithLabelWhere(
-        "User",
-        SourcePredicate.eq("status", "active"),
-      )
-      .count(),
+    g().nWithLabelWhere("User", SourcePredicate.eq("status", "active")).count(),
   )
   .returning(["active_count"]);
 ```
@@ -238,7 +227,7 @@ g()
       SourcePredicate.eq("region", "eu"),
     ]),
   )
-  .valueMap(["$id", "status", "region"])
+  .valueMap(["$id", "status", "region"]);
 ```
 
 The two same-index status points can become one batched bitmap union. The
@@ -253,11 +242,8 @@ membership predicate:
 
 ```ts
 g()
-  .nWithLabelWhere(
-    "Order",
-    SourcePredicate.isInParam("status", "statuses"),
-  )
-  .valueMap(["$id", "status"])
+  .nWithLabelWhere("Order", SourcePredicate.isInParam("status", "statuses"))
+  .valueMap(["$id", "status"]);
 ```
 
 With a compatible non-unique equality index, a scalar or bounded array can use
@@ -275,7 +261,7 @@ g()
   .nWithLabel("Order")
   .where(Predicate.eqParam("region", "region"))
   .where(Predicate.isInParam("status", "statuses"))
-  .valueMap(["$id", "status", "region"])
+  .valueMap(["$id", "status", "region"]);
 ```
 
 The planner can combine label scope and indexed predicates even though the SDK
@@ -291,7 +277,7 @@ Post-filtering source top-k hits can underfill:
 g()
   .vectorSearchNodesWith("Document", "embedding", queryVector, 50, tenant)
   .where(Predicate.eq("published", true))
-  .limit(10)
+  .limit(10);
 ```
 
 Build candidates first, then rank only their IDs:
@@ -301,7 +287,7 @@ g()
   .nWithLabel("Document")
   .where(Predicate.eq("tenantId", tenant))
   .where(Predicate.eq("published", true))
-  .vectorSearchWith("Document", "embedding", queryVector, 10, tenant)
+  .vectorSearchWith("Document", "embedding", queryVector, 10, tenant);
 ```
 
 The second shape cannot return an ID outside the candidate stream.
@@ -314,7 +300,7 @@ Post-filtering source top-k hits can underfill:
 g()
   .textSearchNodesWith("Document", "body", query, 50, tenant)
   .where(Predicate.eq("published", true))
-  .limit(10)
+  .limit(10);
 ```
 
 Build candidates first, then rank only their IDs:
@@ -324,7 +310,7 @@ g()
   .nWithLabel("Document")
   .where(Predicate.eq("tenantId", tenant))
   .where(Predicate.eq("published", true))
-  .textSearchWith("Document", "body", query, 10, tenant)
+  .textSearchWith("Document", "body", query, 10, tenant);
 ```
 
 The second shape is exact and refills to ten when at least ten candidate documents
@@ -336,9 +322,7 @@ match the text query.
 writeBatch()
   .varAs(
     "index",
-    g().createIndexIfNotExists(
-      IndexSpec.nodeRangeDesc("Order", "createdAt"),
-    ),
+    g().createIndexIfNotExists(IndexSpec.nodeRangeDesc("Order", "createdAt")),
   )
   .returning(["index"]);
 ```
@@ -408,7 +392,7 @@ Project the search result while it is still ranked:
 ```ts
 g()
   .textSearchNodes("Document", "body", "consensus protocol", 10)
-  .valueMap(["$id", "title", "$score"])
+  .valueMap(["$id", "title", "$score"]);
 ```
 
 If the query must traverse to related nodes, keep the ranked projection as one named

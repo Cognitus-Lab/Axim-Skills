@@ -43,61 +43,93 @@ You can run Helix Foundry locally on your computer with Docker or connect to an 
 When the `helix-foundry` MCP server is enabled in AXIM / Berry, use these structured tools:
 
 ### 1. `helix_foundry_status`
+
 Check whether Helix Foundry web UI and backend APIs are responsive.
+
 ```json
-{"name": "helix_foundry_status", "arguments": {}}
+{ "name": "helix_foundry_status", "arguments": {} }
 ```
 
 ### 2. `helix_foundry_stack_up`
+
 Start the local Docker Compose stack in the background.
+
 ```json
-{"name": "helix_foundry_stack_up", "arguments": {"profile": "ollama"}}
+{ "name": "helix_foundry_stack_up", "arguments": { "profile": "ollama" } }
 ```
 
 ### 3. `helix_foundry_stack_down`
+
 Stop the running local containers safely without wiping volumes or secrets.
+
 ```json
-{"name": "helix_foundry_stack_down", "arguments": {}}
+{ "name": "helix_foundry_stack_down", "arguments": {} }
 ```
 
 ### 4. `helix_foundry_stack_logs`
+
 View recent container and backend service logs.
+
 ```json
-{"name": "helix_foundry_stack_logs", "arguments": {"lines": 50}}
+{ "name": "helix_foundry_stack_logs", "arguments": { "lines": 50 } }
 ```
 
 ### 5. `helix_foundry_list_ontologies`
+
 List all ontologies and their draft/loaded statuses in the workspace.
+
 ```json
-{"name": "helix_foundry_list_ontologies", "arguments": {"workspace_id": "ws_acme"}}
+{
+  "name": "helix_foundry_list_ontologies",
+  "arguments": { "workspace_id": "ws_acme" }
+}
 ```
 
 ### 6. `helix_foundry_get_ontology`
+
 Fetch full schema definitions, entities, links, and active load IDs for an ontology.
+
 ```json
-{"name": "helix_foundry_get_ontology", "arguments": {"ontology_id": "ont_123", "workspace_id": "ws_acme"}}
+{
+  "name": "helix_foundry_get_ontology",
+  "arguments": { "ontology_id": "ont_123", "workspace_id": "ws_acme" }
+}
 ```
 
 ### 7. `helix_foundry_list_connectors`
+
 List connected data sources, credentials status, and table row counts.
+
 ```json
-{"name": "helix_foundry_list_connectors", "arguments": {"workspace_id": "ws_acme"}}
+{
+  "name": "helix_foundry_list_connectors",
+  "arguments": { "workspace_id": "ws_acme" }
+}
 ```
 
 ### 8. `helix_foundry_list_connector_kinds`
+
 List all available connectors (PostgreSQL, MySQL, S3, Stripe, Slack, Notion, GitHub, Linear, etc.).
+
 ```json
-{"name": "helix_foundry_list_connector_kinds", "arguments": {}}
+{ "name": "helix_foundry_list_connector_kinds", "arguments": {} }
 ```
 
 ### 9. `helix_foundry_list_documents`
+
 List uploaded documents and their extraction states across document sets.
+
 ```json
-{"name": "helix_foundry_list_documents", "arguments": {"workspace_id": "ws_acme", "set_id": "set_docs"}}
+{
+  "name": "helix_foundry_list_documents",
+  "arguments": { "workspace_id": "ws_acme", "set_id": "set_docs" }
+}
 ```
 
 ### 10. `helix_foundry_send_pieces`
+
 Send structured JSON events or records directly to an API event connector.
+
 ```json
 {
   "name": "helix_foundry_send_pieces",
@@ -108,7 +140,7 @@ Send structured JSON events or records directly to an API event connector.
         "id": "order_1001",
         "data": {
           "customer": "Alice",
-          "amount": 250.00,
+          "amount": 250.0,
           "status": "completed"
         }
       }
@@ -119,7 +151,9 @@ Send structured JSON events or records directly to an API event connector.
 ```
 
 ### 11. `helix_foundry_ask`
+
 Query the Helix Foundry Analyst for answers grounded in your business ontology.
+
 ```json
 {
   "name": "helix_foundry_ask",
@@ -135,6 +169,7 @@ Query the Helix Foundry Analyst for answers grounded in your business ontology.
 ## Quickstart: Local Computer Deployment
 
 To spin up Helix Foundry on this machine:
+
 1. Ensure Docker Desktop or Docker Engine is running.
 2. In the plugin directory or via tool:
    ```sh
@@ -149,6 +184,7 @@ To spin up Helix Foundry on this machine:
 ---
 
 ## Best Practices & Security
+
 - **Data Privacy**: Stored credentials (database passwords, API keys) are sealed with local AES connector keys in the `secrets` Docker volume.
 - **Never Run `docker compose down -v`**: Preserves connector keys and synced data.
 - **Loopback Bound**: In local mode, the application listens on `127.0.0.1` only for local sovereign control.

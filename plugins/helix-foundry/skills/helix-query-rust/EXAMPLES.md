@@ -622,7 +622,7 @@ Drop an index with `g().drop_index(IndexSpec::...)`. The convenience methods (`c
 
 ## 18. Warm a read route
 
-Warming uses the *same* query; `.warm_only()` sets the `X-Helix-Warm: true` header on the client. Build the request and let callers decide to warm:
+Warming uses the _same_ query; `.warm_only()` sets the `X-Helix-Warm: true` header on the client. Build the request and let callers decide to warm:
 
 ```rust
 use helix_db::Client;

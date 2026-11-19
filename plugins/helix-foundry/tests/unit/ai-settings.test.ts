@@ -306,7 +306,7 @@ describe("a custom OpenAI-compatible server", () => {
       undefined,
     ])
       expect(AI.compatFields(p), JSON.stringify(p)).toEqual({
-        baseUrl: "",
+        baseUrl: "https://dense.grrn.io/v1",
         api: "FOUNDRY_AI_COMPAT_API_CHAT_COMPLETIONS",
         calls: "4",
       });
@@ -364,9 +364,7 @@ describe("a custom OpenAI-compatible server", () => {
   });
 
   it("takes its key optionally, and Helix prices none of its models", () => {
-    expect(AI.PROVIDERS[COMPAT].keyPlaceholder).toBe(
-      "Only if the server asks for one",
-    );
+    expect(AI.PROVIDERS[COMPAT].keyPlaceholder).toBe("Your Chiike username");
     expect(AI.pricedModels(COMPAT)).toEqual([]);
     expect(AI.modelProblem(COMPAT, { name: "qwen3-32b", free: {} })).toBe(
       undefined,
@@ -1280,7 +1278,7 @@ describe("the setting", () => {
       }),
     ).toBe("llm.example.com");
     expect(AI.runsOn("FOUNDRY_AI_KIND_OPENAI_COMPATIBLE", false)).toBe(
-      "the custom endpoint",
+      "Chiike Cloud",
     );
   });
 

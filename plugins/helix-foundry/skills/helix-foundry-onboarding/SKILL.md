@@ -76,12 +76,12 @@ Call `helix_foundry_list_ontologies`.
 `current_load`. If there are several, ask which. Read it with
 `helix_foundry_get_ontology` and pick up where it stopped:
 
-| It has | Go to |
-| --- | --- |
+| It has                             | Go to                |
+| ---------------------------------- | -------------------- |
 | A generation `queued` or `running` | Step 5, following it |
-| A load running (`active_job`) | Step 7, following it |
-| A version with no load | Step 6 |
-| Nothing yet | Step 3 |
+| A load running (`active_job`)      | Step 7, following it |
+| A version with no load             | Step 6               |
+| Nothing yet                        | Step 3               |
 
 **Create** one otherwise. Suggest a name, such as the business's, and ask. Then:
 
@@ -185,8 +185,17 @@ plan syncs more often (Free daily, Pro hourly, Max every 15 minutes).
    user:
 
    ```json
-   {"workspace_id": "<workspace_id>", "event_source_id": "<its id>", "client_token": "<a new UUID>",
-    "pieces": [{"id": "<the piece's id>", "data_json": "<the piece, a JSON object as text>"}]}
+   {
+     "workspace_id": "<workspace_id>",
+     "event_source_id": "<its id>",
+     "client_token": "<a new UUID>",
+     "pieces": [
+       {
+         "id": "<the piece's id>",
+         "data_json": "<the piece, a JSON object as text>"
+       }
+     ]
+   }
    ```
 
    For their apps or agents to send later, give the user `token_url`: they make a
@@ -197,6 +206,7 @@ plan syncs more often (Free daily, Pro hourly, Max every 15 minutes).
    token as its bearer and a `client_token` on every send (helix-foundry-mcp's Send
    over HTTP has the curl and what each status means). Without `send_url`, apps
    send through the MCP.
+
 5. It counts once `helix_foundry_list_connectors` shows its `events` table with
    rows, about a minute after the first send; for extraction, once its
    `event_source.extraction.documents` is above 0. Never `sync_connector` an API

@@ -440,7 +440,7 @@ function OwnerForm({
     if (AI.baseUrl(s.baseUrl) !== AI.baseUrl(server.baseUrl)) setApiKey("");
     setServer(s);
   };
-  const keptElsewhere =
+  const _keptElsewhere =
     kind === COMPAT &&
     activeKind === COMPAT &&
     !!ai.active?.hasKey &&

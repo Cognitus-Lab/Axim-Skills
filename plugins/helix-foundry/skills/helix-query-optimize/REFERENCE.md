@@ -13,33 +13,33 @@ Public DSL and JSON syntax are unchanged.
 The links are pinned to reviewed main commit `5ec14e5f`; prefer paths and symbols
 over brittle line-number citations.
 
-| Concern | Canonical sources |
-| --- | --- |
-| Exact cross-numeric equality/order | [`crates/value-semantics/src/lib.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/value-semantics/src/lib.rs) |
-| Logical equality/range set rewrites | [`crates/planner/src/rules/access/sets/equality_range/`](https://github.com/HelixDB/helix-db/tree/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/planner/src/rules/access/sets/equality_range) |
-| Runtime equality-domain analysis | [`analysis/index_atoms/equality.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/planner/src/analysis/index_atoms/equality.rs), [`rules/access/filter/atoms/collect.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/planner/src/rules/access/filter/atoms/collect.rs) |
-| Runtime membership execution | [`access/membership.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/db/src/execution/interpreter/access/membership.rs) |
-| Adjacent-filter canonicalization | [`logical/access/pipeline/canonical.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/planner/src/logical/access/pipeline/canonical.rs) |
-| Ordered range selection | [`range_direction.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/planner/src/rules/access/order/rules/range_direction.rs), [`sets/range/`](https://github.com/HelixDB/helix-db/tree/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/planner/src/rules/access/sets/range) |
-| Physical equality/range programs | [`exec/access/node.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/planner/src/exec/access/node.rs), [`exec/access/edge.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/planner/src/exec/access/edge.rs), [`exec/selected/`](https://github.com/HelixDB/helix-db/tree/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/planner/src/exec/selected) |
-| Count programs and windows | [`exec/count.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/planner/src/exec/count.rs), [`rules/cardinality.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/planner/src/rules/cardinality.rs) |
-| Equality/range execution | [`secondary_set.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/db/src/execution/interpreter/access/secondary_set.rs), [`range.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/db/src/execution/interpreter/access/range.rs) |
-| Count execution | [`interpreter/count.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/db/src/execution/interpreter/count.rs) |
+| Concern                             | Canonical sources                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Exact cross-numeric equality/order  | [`crates/value-semantics/src/lib.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/value-semantics/src/lib.rs)                                                                                                                                                                                                                                                                                   |
+| Logical equality/range set rewrites | [`crates/planner/src/rules/access/sets/equality_range/`](https://github.com/HelixDB/helix-db/tree/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/planner/src/rules/access/sets/equality_range)                                                                                                                                                                                                                                              |
+| Runtime equality-domain analysis    | [`analysis/index_atoms/equality.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/planner/src/analysis/index_atoms/equality.rs), [`rules/access/filter/atoms/collect.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/planner/src/rules/access/filter/atoms/collect.rs)                                                                             |
+| Runtime membership execution        | [`access/membership.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/db/src/execution/interpreter/access/membership.rs)                                                                                                                                                                                                                                                                         |
+| Adjacent-filter canonicalization    | [`logical/access/pipeline/canonical.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/planner/src/logical/access/pipeline/canonical.rs)                                                                                                                                                                                                                                                          |
+| Ordered range selection             | [`range_direction.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/planner/src/rules/access/order/rules/range_direction.rs), [`sets/range/`](https://github.com/HelixDB/helix-db/tree/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/planner/src/rules/access/sets/range)                                                                                                                      |
+| Physical equality/range programs    | [`exec/access/node.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/planner/src/exec/access/node.rs), [`exec/access/edge.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/planner/src/exec/access/edge.rs), [`exec/selected/`](https://github.com/HelixDB/helix-db/tree/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/planner/src/exec/selected) |
+| Count programs and windows          | [`exec/count.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/planner/src/exec/count.rs), [`rules/cardinality.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/planner/src/rules/cardinality.rs)                                                                                                                                                   |
+| Equality/range execution            | [`secondary_set.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/db/src/execution/interpreter/access/secondary_set.rs), [`range.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/db/src/execution/interpreter/access/range.rs)                                                                                                                     |
+| Count execution                     | [`interpreter/count.rs`](https://github.com/HelixDB/helix-db/blob/5ec14e5f8cf059aa03f42917d560b3cded09fb26/crates/db/src/execution/interpreter/count.rs)                                                                                                                                                                                                                                                                                     |
 
 The planner directory is intentionally decomposed; do not describe the runtime as
 one monolithic interpreter-only model.
 
 ## Sources
 
-| Source | Typical cost characteristic |
-|---|---|
-| `n` / `e` with exact IDs | direct lookup |
-| `nWithLabelWhere` / `eWithLabelWhere` | index-eligible label-scoped predicate |
-| `nWhere` / `eWhere` | predicate source; scope determines usable indexes |
-| `nWithLabel` / `eWithLabel` | all elements under one label |
-| all IDs | broad scan |
-| vector search | HNSW top-k |
-| text search | BM25 top-k |
+| Source                                | Typical cost characteristic                       |
+| ------------------------------------- | ------------------------------------------------- |
+| `n` / `e` with exact IDs              | direct lookup                                     |
+| `nWithLabelWhere` / `eWithLabelWhere` | index-eligible label-scoped predicate             |
+| `nWhere` / `eWhere`                   | predicate source; scope determines usable indexes |
+| `nWithLabel` / `eWithLabel`           | all elements under one label                      |
+| all IDs                               | broad scan                                        |
+| vector search                         | HNSW top-k                                        |
+| text search                           | BM25 top-k                                        |
 
 `SourcePredicate` is the source-position predicate surface. `Predicate` is the
 general filter expression used by `where`. Prefer a label-scoped source predicate
@@ -47,14 +47,14 @@ when the filter is known before traversal.
 
 ## Index families
 
-| Index family | Intended operations | Correctness boundary |
-|---|---|---|
-| non-unique equality | exact bitmap point reads, membership, batched same-index unions | literal/parameter must be compatible and reflexive |
-| unique equality | owner point read | authoritative owner verification remains required |
-| range | ordered comparisons, bounded ranges, ordered reads | candidates are verified against authoritative values |
-| vector | nearest-neighbor search on numeric arrays | tenant and `k` remain part of the plan |
-| text | BM25 full-text search | tenant and `k` remain part of the plan |
-| authoritative scan | null/non-indexable/residual fallback | correctness path, not necessarily a planner failure |
+| Index family        | Intended operations                                             | Correctness boundary                                 |
+| ------------------- | --------------------------------------------------------------- | ---------------------------------------------------- |
+| non-unique equality | exact bitmap point reads, membership, batched same-index unions | literal/parameter must be compatible and reflexive   |
+| unique equality     | owner point read                                                | authoritative owner verification remains required    |
+| range               | ordered comparisons, bounded ranges, ordered reads              | candidates are verified against authoritative values |
+| vector              | nearest-neighbor search on numeric arrays                       | tenant and `k` remain part of the plan               |
+| text                | BM25 full-text search                                           | tenant and `k` remain part of the plan               |
+| authoritative scan  | null/non-indexable/residual fallback                            | correctness path, not necessarily a planner failure  |
 
 Node and edge indexes are distinct. Index label, property, vector dimension, distance
 metric, and tenant property must match the query.
@@ -197,17 +197,17 @@ planner could otherwise avoid.
 
 ## Correctness Fallbacks
 
-| Case | Why the direct fast path is declined or supplemented | Expected shape |
-| --- | --- | --- |
-| unique equality | index ownership needs authoritative confirmation | point lookup plus owner verification |
-| range | encoded entry is a candidate, not final truth | ordered candidate scan plus authoritative verification |
-| null equality | absent and explicit-null semantics need row inspection | scoped authoritative scan |
-| NaN equality | equality is non-reflexive | non-indexable/empty proof, never an equality bitmap lookup |
-| late-bound equality parameter | value is unavailable during early proof | dynamic equality program at execution, or fallback |
-| runtime membership domain | domain is null, unsupported, oversized, or exceeds the union bound | authoritative scoped membership evaluation |
-| unknown/mismatched index identity | element/label/property/direction/uniqueness would be unsafe | validation failure or authoritative alternative |
-| identity-sensitive count | row identity/distinct/order semantics matter | streaming/materialized count cursor |
-| residual predicate | no exact set proof exists | narrow indexed candidate plus residual evaluation, or scan |
+| Case                              | Why the direct fast path is declined or supplemented               | Expected shape                                             |
+| --------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------- |
+| unique equality                   | index ownership needs authoritative confirmation                   | point lookup plus owner verification                       |
+| range                             | encoded entry is a candidate, not final truth                      | ordered candidate scan plus authoritative verification     |
+| null equality                     | absent and explicit-null semantics need row inspection             | scoped authoritative scan                                  |
+| NaN equality                      | equality is non-reflexive                                          | non-indexable/empty proof, never an equality bitmap lookup |
+| late-bound equality parameter     | value is unavailable during early proof                            | dynamic equality program at execution, or fallback         |
+| runtime membership domain         | domain is null, unsupported, oversized, or exceeds the union bound | authoritative scoped membership evaluation                 |
+| unknown/mismatched index identity | element/label/property/direction/uniqueness would be unsafe        | validation failure or authoritative alternative            |
+| identity-sensitive count          | row identity/distinct/order semantics matter                       | streaming/materialized count cursor                        |
+| residual predicate                | no exact set proof exists                                          | narrow indexed candidate plus residual evaluation, or scan |
 
 Literal equality can be encoded during planning. A genuinely late-bound parameter
 can remain dynamic and resolve from execution context, with index identity

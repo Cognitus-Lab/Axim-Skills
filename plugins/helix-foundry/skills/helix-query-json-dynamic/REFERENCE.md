@@ -38,13 +38,13 @@ headers, status codes, body limits, and the raw-JSON parameter subset.
 }
 ```
 
-| Field | Required | Shape |
-|---|---:|---|
-| `request_type` | yes | lowercase `"read"` or `"write"` |
-| `query_name` | no | non-empty string or `null` |
-| `query` | yes | `{ "read": ReadBatch }` or `{ "write": WriteBatch }` |
-| `parameters` | no | object of JSON runtime values |
-| `parameter_types` | no | object of v3 parameter type descriptors; when present, keys exactly match `parameters` |
+| Field             | Required | Shape                                                                                  |
+| ----------------- | -------: | -------------------------------------------------------------------------------------- |
+| `request_type`    |      yes | lowercase `"read"` or `"write"`                                                        |
+| `query_name`      |       no | non-empty string or `null`                                                             |
+| `query`           |      yes | `{ "read": ReadBatch }` or `{ "write": WriteBatch }`                                   |
+| `parameters`      |       no | object of JSON runtime values                                                          |
+| `parameter_types` |       no | object of v3 parameter type descriptors; when present, keys exactly match `parameters` |
 
 The batch variant must match `request_type`, and every batch must contain at
 least one entry.
@@ -174,25 +174,25 @@ Each following operation wraps the prior node under `input`:
 
 Common read nodes:
 
-| Builder idea | JSON variant | Important fields |
-|---|---|---|
-| node source | `nodes` | `reference` |
-| indexed/filterable node source | `nodes_where` | `predicate` |
-| edge source | `edges`, `edges_where` | `reference` or `predicate` |
-| traverse | `out`, `in`, `both` | `input`, optional `label` |
-| edge traversal | `out_e`, `in_e`, `both_e` | `input`, optional `label` |
-| edge to node | `out_n`, `in_n`, `other_n` | `input` |
-| filter | `where` | `input`, `predicate` |
-| bound stream | `limit`, `range`, `skip` | `input` plus bound fields |
-| deduplicate | `dedup` | `input` |
-| project properties | `value_map` | `input`, `properties` |
-| structured projection | `project` | `input`, `projections` |
-| aggregate | `count`, `exists`, `aggregate` | `input` |
-| order | `order_by`, `order_by_multiple` | `input` plus order fields |
-| vector search | `vector_search_nodes`, `vector_search_edges` | label, property, query vector, `k`, optional tenant |
-| text search | `text_search_nodes`, `text_search_edges` | label, property, query text, `k`, optional tenant |
-| restricted vector search | `vector_search_nodes_within`, `vector_search_edges_within` | `input`, label, property, query vector, `k`, optional tenant |
-| restricted text search | `text_search_nodes_within`, `text_search_edges_within` | `input`, label, property, query text, `k`, optional tenant |
+| Builder idea                   | JSON variant                                               | Important fields                                             |
+| ------------------------------ | ---------------------------------------------------------- | ------------------------------------------------------------ |
+| node source                    | `nodes`                                                    | `reference`                                                  |
+| indexed/filterable node source | `nodes_where`                                              | `predicate`                                                  |
+| edge source                    | `edges`, `edges_where`                                     | `reference` or `predicate`                                   |
+| traverse                       | `out`, `in`, `both`                                        | `input`, optional `label`                                    |
+| edge traversal                 | `out_e`, `in_e`, `both_e`                                  | `input`, optional `label`                                    |
+| edge to node                   | `out_n`, `in_n`, `other_n`                                 | `input`                                                      |
+| filter                         | `where`                                                    | `input`, `predicate`                                         |
+| bound stream                   | `limit`, `range`, `skip`                                   | `input` plus bound fields                                    |
+| deduplicate                    | `dedup`                                                    | `input`                                                      |
+| project properties             | `value_map`                                                | `input`, `properties`                                        |
+| structured projection          | `project`                                                  | `input`, `projections`                                       |
+| aggregate                      | `count`, `exists`, `aggregate`                             | `input`                                                      |
+| order                          | `order_by`, `order_by_multiple`                            | `input` plus order fields                                    |
+| vector search                  | `vector_search_nodes`, `vector_search_edges`               | label, property, query vector, `k`, optional tenant          |
+| text search                    | `text_search_nodes`, `text_search_edges`                   | label, property, query text, `k`, optional tenant            |
+| restricted vector search       | `vector_search_nodes_within`, `vector_search_edges_within` | `input`, label, property, query vector, `k`, optional tenant |
+| restricted text search         | `text_search_nodes_within`, `text_search_edges_within`     | `input`, label, property, query text, `k`, optional tenant   |
 
 Restricted vector search enforces exact membership over input IDs, although
 approximate index structures may accelerate ranking. The ranked stream receives
@@ -206,14 +206,14 @@ input or more than 1,000,000 unique candidates is a query error.
 
 Common write nodes:
 
-| Builder idea | JSON variant | Important fields |
-|---|---|---|
-| add node | `add_n` | optional `input`, `label`, ordered `properties` |
-| add edge | `add_e` | `input`, `label`, `to`, ordered `properties` |
-| set property | `set_property` | `input`, `property`, `value` |
-| drop current elements | `drop` | `input` |
-| create index | `create_index` | `spec` |
-| drop index | `drop_index` | `name` |
+| Builder idea          | JSON variant   | Important fields                                |
+| --------------------- | -------------- | ----------------------------------------------- |
+| add node              | `add_n`        | optional `input`, `label`, ordered `properties` |
+| add edge              | `add_e`        | `input`, `label`, `to`, ordered `properties`    |
+| set property          | `set_property` | `input`, `property`, `value`                    |
+| drop current elements | `drop`         | `input`                                         |
+| create index          | `create_index` | `spec`                                          |
+| drop index            | `drop_index`   | `name`                                          |
 
 Use the SDK builders when a less-common node is needed. Serialize with
 `toQueryJson`/`to_query_json` or the Rust/Go JSON encoder and treat that output as
@@ -373,7 +373,10 @@ Current Helix non-success responses, including responses delivered through the
 Cloud query gateway, use a separate code/diagnostic pair:
 
 ```json
-{"error":"index_not_found","msg":"planner error: missing text index for `Document.body`"}
+{
+  "error": "index_not_found",
+  "msg": "planner error: missing text index for `Document.body`"
+}
 ```
 
 The current Helix body has no separate `code` field. For mixed-version

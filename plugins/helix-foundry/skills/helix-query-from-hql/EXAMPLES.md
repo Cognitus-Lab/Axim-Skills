@@ -181,7 +181,7 @@ const body = getCreator().toQueryJson(getCreatorParams, { creationId: "e-9" });
 ```
 
 > `::FromN` (edge → source) is `.in_n()` / `.inN()`; `::ToN` (edge → target) is `.out_n()` / `.outN()`. Easy to
-> invert — `From` is the *incoming* side from the edge's perspective.
+> invert — `From` is the _incoming_ side from the edge's perspective.
 
 ---
 
@@ -216,7 +216,10 @@ read_batch()
 ```
 
 ```ts
-const activeAdultsParams = defineParams({ status: param.string(), minAge: param.i64() });
+const activeAdultsParams = defineParams({
+  status: param.string(),
+  minAge: param.i64(),
+});
 
 function activeAdults(_ = activeAdultsParams) {
   return readBatch()
@@ -241,7 +244,10 @@ function activeAdults(_ = activeAdultsParams) {
     .returning(["users"]);
 }
 
-const body = activeAdults().toQueryJson(activeAdultsParams, { status: "active", minAge: 18n });
+const body = activeAdults().toQueryJson(activeAdultsParams, {
+  status: "active",
+  minAge: 18n,
+});
 ```
 
 > HQL widths (`U8`) collapse to `i64`/`param.i64()`. `RANGE(0,20)` maps 1:1 to `.range(0,20)`. Note the TS param
@@ -274,7 +280,10 @@ read_batch()
 ```
 
 ```ts
-const searchUsersParams = defineParams({ statuses: param.array(param.string()), term: param.string() });
+const searchUsersParams = defineParams({
+  statuses: param.array(param.string()),
+  term: param.string(),
+});
 
 function searchUsers(_ = searchUsersParams) {
   return readBatch()
@@ -293,7 +302,10 @@ function searchUsers(_ = searchUsersParams) {
     .returning(["users"]);
 }
 
-const body = searchUsers().toQueryJson(searchUsersParams, { statuses: ["active", "pending"], term: "graph" });
+const body = searchUsers().toQueryJson(searchUsersParams, {
+  statuses: ["active", "pending"],
+  term: "graph",
+});
 ```
 
 ---
@@ -388,7 +400,11 @@ function findDocs(_ = findDocsParams) {
     .returning(["docs"]);
 }
 
-const body = findDocs().toQueryJson(findDocsParams, { vector: [0.1, 0.2, 0.3], k: 10n, tenantId: "acme" });
+const body = findDocs().toQueryJson(findDocsParams, {
+  vector: [0.1, 0.2, 0.3],
+  k: 10n,
+  tenantId: "acme",
+});
 ```
 
 > Use the **`_with`/`...With`** search variants for runtime params (vector, `k`, tenant). The plain
@@ -425,18 +441,30 @@ read_batch()
 ```
 
 ```ts
-const searchDocsParams = defineParams({ keywords: param.string(), k: param.i64() });
+const searchDocsParams = defineParams({
+  keywords: param.string(),
+  k: param.i64(),
+});
 
 function searchDocs(_ = searchDocsParams) {
   return readBatch()
     .varAs(
       "docs",
-      g().textSearchNodesWith("Document", "content", PropertyInput.param("keywords"), Expr.param("k"), null),
+      g().textSearchNodesWith(
+        "Document",
+        "content",
+        PropertyInput.param("keywords"),
+        Expr.param("k"),
+        null,
+      ),
     )
     .returning(["docs"]);
 }
 
-const body = searchDocs().toQueryJson(searchDocsParams, { keywords: "machine learning", k: 5n });
+const body = searchDocs().toQueryJson(searchDocsParams, {
+  keywords: "machine learning",
+  k: 5n,
+});
 ```
 
 > The property argument (`"content"`) must be the BM25-indexed text field. Pass `None`/`null` for tenant when the
@@ -471,7 +499,10 @@ write_batch()
 ```
 
 ```ts
-const createFollowParams = defineParams({ name: param.string(), targetId: param.string() });
+const createFollowParams = defineParams({
+  name: param.string(),
+  targetId: param.string(),
+});
 
 function createFollow(_ = createFollowParams) {
   return writeBatch()
@@ -483,7 +514,10 @@ function createFollow(_ = createFollowParams) {
     .returning(["user", "edge"]);
 }
 
-const body = createFollow().toQueryJson(createFollowParams, { name: "Alice", targetId: "u-7" });
+const body = createFollow().toQueryJson(createFollowParams, {
+  name: "Alice",
+  targetId: "u-7",
+});
 ```
 
 > `add_e` is a step on the **From** node; the **To** node is the second argument. Note this is a `write_batch`
@@ -511,15 +545,26 @@ write_batch()
 ```
 
 ```ts
-const renameUserParams = defineParams({ userId: param.string(), newName: param.string() });
+const renameUserParams = defineParams({
+  userId: param.string(),
+  newName: param.string(),
+});
 
 function renameUser(_ = renameUserParams) {
   return writeBatch()
-    .varAs("updated", g().n(NodeRef.param("userId")).setProperty("name", PropertyInput.param("newName")))
+    .varAs(
+      "updated",
+      g()
+        .n(NodeRef.param("userId"))
+        .setProperty("name", PropertyInput.param("newName")),
+    )
     .returning(["updated"]);
 }
 
-const body = renameUser().toQueryJson(renameUserParams, { userId: "u-42", newName: "Alicia" });
+const body = renameUser().toQueryJson(renameUserParams, {
+  userId: "u-42",
+  newName: "Alicia",
+});
 ```
 
 > One `set_property`/`setProperty` per field; chain calls for several. Omitted fields stay unchanged, matching
@@ -585,14 +630,21 @@ write_batch()
 ```
 
 ```ts
-const createUsersParams = defineParams({ users: param.array(param.object(param.string())) });
+const createUsersParams = defineParams({
+  users: param.array(param.object(param.string())),
+});
 
 function createUsers(_ = createUsersParams) {
-  const body = writeBatch().varAs("u", g().addN("User", { name: PropertyInput.param("name") }));
+  const body = writeBatch().varAs(
+    "u",
+    g().addN("User", { name: PropertyInput.param("name") }),
+  );
   return writeBatch().forEachParam("users", body).returning([]);
 }
 
-const body = createUsers().toQueryJson(createUsersParams, { users: [{ name: "Alice" }, { name: "Bob" }] });
+const body = createUsers().toQueryJson(createUsersParams, {
+  users: [{ name: "Alice" }, { name: "Bob" }],
+});
 ```
 
 > `for_each_param`/`forEachParam` iterates the objects of an **array parameter** — it is not a general loop. The
@@ -631,7 +683,10 @@ read_batch()
 function usersWithFollowers() {
   return readBatch()
     .varAs("followed", g().eWithLabel("Follows").outN().dedup())
-    .varAs("users", g().nWithLabel("User").within("followed").valueMap(["name"]))
+    .varAs(
+      "users",
+      g().nWithLabel("User").within("followed").valueMap(["name"]),
+    )
     .returning(["users"]);
 }
 
@@ -661,6 +716,7 @@ Four HQL features here have **no DSL equivalent**: the `#[model]` macro, `Embed(
 `::RerankRRF`. Translate only the supported core; do the rest in app code.
 
 **App code (outside the DSL):**
+
 1. Embed `content` with your model → `vector` (replaces `Embed` and `#[model]`).
 2. Upsert = read-then-branch: query by `content`; if found, `set_property` the vector/fields, else `add_n` with
    the vector (replaces `UpsertV`).
@@ -689,14 +745,23 @@ read_batch()
 ```
 
 ```ts
-const searchSimilarParams = defineParams({ vector: param.array(param.f64()), k: param.i64() });
+const searchSimilarParams = defineParams({
+  vector: param.array(param.f64()),
+  k: param.i64(),
+});
 
 function searchSimilar(_ = searchSimilarParams) {
   return readBatch()
     .varAs(
       "hits",
       g()
-        .vectorSearchNodesWith("Document", "embedding", PropertyInput.param("vector"), Expr.param("k"), null)
+        .vectorSearchNodesWith(
+          "Document",
+          "embedding",
+          PropertyInput.param("vector"),
+          Expr.param("k"),
+          null,
+        )
         .project([
           PropertyProjection.renamed("$id", "docID"),
           PropertyProjection.renamed("$distance", "distance"),
@@ -706,7 +771,10 @@ function searchSimilar(_ = searchSimilarParams) {
     .returning(["hits"]);
 }
 
-const body = searchSimilar().toQueryJson(searchSimilarParams, { vector: [0.1, 0.2, 0.3], k: 10n });
+const body = searchSimilar().toQueryJson(searchSimilarParams, {
+  vector: [0.1, 0.2, 0.3],
+  k: 10n,
+});
 ```
 
 > Always tell the user which parts moved to app code and why, rather than inventing a DSL shape for an

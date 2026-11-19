@@ -771,27 +771,27 @@ JSON utilities. Use `stringifyJson` or `toJsonString` instead of raw
 
 ## Rust ↔ TypeScript Naming Map
 
-| Rust | TypeScript |
-|---|---|
-| `read_batch()` / `write_batch()` | `readBatch()` / `writeBatch()` |
-| `var_as(...)` / `var_as_if(...)` | `varAs(...)` / `varAsIf(...)` |
-| `for_each_param(...)` | `forEachParam(...)` |
-| `bind(...)` | `bind(...)` |
-| `project_bindings(...)` / `project_distinct_bindings(...)` | `projectBindings(...)` / `projectDistinctBindings(...)` |
-| `BindingProjection::binding(...)` / `::coalesce(...)` | `BindingProjection.binding(...)` / `.coalesce(...)` |
-| `BindingValueRef::binding(...)` | `BindingProjection.bindingRef(...)` |
-| `n_with_label[_where]` | `nWithLabel[Where]` |
-| `in_` | `in` |
-| `where_(...)` | `where(...)` |
-| `value_map(...)` | `valueMap(...)` |
-| `order_by[_multiple]` | `orderBy[Multiple]` |
-| `NodeRef::var(...)` | `NodeRef.var(...)` |
-| `SourcePredicate::eq(...)` | `SourcePredicate.eq(...)` |
-| `Predicate::eq_param(...)` | `Predicate.eqParam(...)` |
-| `vector_search_nodes_with(...)` | `vectorSearchNodesWith(...)` |
-| `#[query] fn` + fn params | `defineParams(...)` + a normal builder function |
+| Rust                                                              | TypeScript                                                  |
+| ----------------------------------------------------------------- | ----------------------------------------------------------- |
+| `read_batch()` / `write_batch()`                                  | `readBatch()` / `writeBatch()`                              |
+| `var_as(...)` / `var_as_if(...)`                                  | `varAs(...)` / `varAsIf(...)`                               |
+| `for_each_param(...)`                                             | `forEachParam(...)`                                         |
+| `bind(...)`                                                       | `bind(...)`                                                 |
+| `project_bindings(...)` / `project_distinct_bindings(...)`        | `projectBindings(...)` / `projectDistinctBindings(...)`     |
+| `BindingProjection::binding(...)` / `::coalesce(...)`             | `BindingProjection.binding(...)` / `.coalesce(...)`         |
+| `BindingValueRef::binding(...)`                                   | `BindingProjection.bindingRef(...)`                         |
+| `n_with_label[_where]`                                            | `nWithLabel[Where]`                                         |
+| `in_`                                                             | `in`                                                        |
+| `where_(...)`                                                     | `where(...)`                                                |
+| `value_map(...)`                                                  | `valueMap(...)`                                             |
+| `order_by[_multiple]`                                             | `orderBy[Multiple]`                                         |
+| `NodeRef::var(...)`                                               | `NodeRef.var(...)`                                          |
+| `SourcePredicate::eq(...)`                                        | `SourcePredicate.eq(...)`                                   |
+| `Predicate::eq_param(...)`                                        | `Predicate.eqParam(...)`                                    |
+| `vector_search_nodes_with(...)`                                   | `vectorSearchNodesWith(...)`                                |
+| `#[query] fn` + fn params                                         | `defineParams(...)` + a normal builder function             |
 | `QueryRequest::read(b).with_query_name("route").to_json_string()` | `batch.toQueryJson(params, values, { queryName: "route" })` |
-| `Client::new(Some(url))?` / `.with_api_key(...)` | `new Client(url)` / `.withApiKey(...)` |
-| `client.request_builder().warm_only().query(r).send()` | `client.requestBuilder().warmOnly().query(r).send()` |
+| `Client::new(Some(url))?` / `.with_api_key(...)`                  | `new Client(url)` / `.withApiKey(...)`                      |
+| `client.request_builder().warm_only().query(r).send()`            | `client.requestBuilder().warmOnly().query(r).send()`        |
 
 The wire output (enum tags, field names, omitted/null fields) is identical between the two DSLs — only the surface naming differs.

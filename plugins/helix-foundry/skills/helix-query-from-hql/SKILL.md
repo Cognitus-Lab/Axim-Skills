@@ -56,7 +56,7 @@ Before translating:
 3. Decide **read vs write** — any `AddN`/`AddE`/`AddV`/`UPDATE`/`DROP`/`Upsert` means a write batch.
 4. Inspect the local repo for the real labels, edge labels, indexed properties, and route style. Do not invent
    names.
-5. Scan the HQL for **unsupported features** (see below) *before* writing — they change the plan from "translate"
+5. Scan the HQL for **unsupported features** (see below) _before_ writing — they change the plan from "translate"
    to "translate the supported core + flag the rest for app code".
 6. Open `REFERENCE.md` for the per-feature mapping table and `EXAMPLES.md` for end-to-end migrations.
 
@@ -210,7 +210,11 @@ read_batch()
 TypeScript DSL:
 
 ```ts
-const activeFollowingParams = defineParams({ userId: param.string(), status: param.string(), limit: param.i64() });
+const activeFollowingParams = defineParams({
+  userId: param.string(),
+  status: param.string(),
+  limit: param.i64(),
+});
 
 function activeFollowing(_ = activeFollowingParams) {
   return readBatch()
@@ -231,7 +235,11 @@ function activeFollowing(_ = activeFollowingParams) {
     .returning(["results"]);
 }
 
-const body = activeFollowing().toQueryJson(activeFollowingParams, { userId: "u-42", status: "active", limit: 20n });
+const body = activeFollowing().toQueryJson(activeFollowingParams, {
+  userId: "u-42",
+  status: "active",
+  limit: 20n,
+});
 ```
 
 ## Anti-Patterns

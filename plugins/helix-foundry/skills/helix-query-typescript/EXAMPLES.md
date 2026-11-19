@@ -18,7 +18,10 @@ execute it with `await Client.server(url).query<R>(request).send()`. Use
 ```ts
 function activeUserCount() {
   return readBatch()
-    .varAs("active_count", g().nWithLabel("User").where(Predicate.eq("status", "active")).count())
+    .varAs(
+      "active_count",
+      g().nWithLabel("User").where(Predicate.eq("status", "active")).count(),
+    )
     .returning(["active_count"]);
 }
 
@@ -60,7 +63,10 @@ function userById(p = userByIdParams) {
       g()
         .nWithLabel("User")
         .where(Predicate.eqParam("userId", "userId"))
-        .project([PropertyProjection.renamed("$id", "id"), PropertyProjection.new("name")]),
+        .project([
+          PropertyProjection.renamed("$id", "id"),
+          PropertyProjection.new("name"),
+        ]),
     )
     .returning(["user"]);
 }
@@ -138,7 +144,10 @@ top-k. Project `$distance` before any `.out`/`.in`/`.both`.
 ## 5. Full Text Search prefiltering over traversal candidates
 
 ```ts
-const docSearchParams = defineParams({ tenantId: param.string(), q: param.string() });
+const docSearchParams = defineParams({
+  tenantId: param.string(),
+  q: param.string(),
+});
 
 function documentSearch(p = docSearchParams) {
   return readBatch()
@@ -148,7 +157,13 @@ function documentSearch(p = docSearchParams) {
         .nWithLabel("Document")
         .where(Predicate.eqParam("tenantId", "tenantId"))
         .where(Predicate.eq("published", true))
-        .textSearchWith("Document", "body", PropertyInput.param("q"), 10, PropertyInput.param("tenantId"))
+        .textSearchWith(
+          "Document",
+          "body",
+          PropertyInput.param("q"),
+          10,
+          PropertyInput.param("tenantId"),
+        )
         .project([
           PropertyProjection.renamed("$id", "id"),
           PropertyProjection.new("title"),
@@ -226,7 +241,11 @@ function userContent(p = contentParams) {
       "content",
       g()
         .n(NodeRef.param("userId"))
-        .choose(Predicate.eq("tier", "premium"), sub().out("HAS_PREMIUM"), sub().out("HAS_FREE"))
+        .choose(
+          Predicate.eq("tier", "premium"),
+          sub().out("HAS_PREMIUM"),
+          sub().out("HAS_FREE"),
+        )
         .limit(20)
         .valueMap(["$id", "title"]),
     )
@@ -247,7 +266,11 @@ function preferredTeam(p = teamParams) {
       "team",
       g()
         .n(NodeRef.param("userId"))
-        .coalesce([sub().out("PREFERRED_TEAM"), sub().out("PRIMARY_TEAM"), sub().out("MEMBER_OF").limit(1)])
+        .coalesce([
+          sub().out("PREFERRED_TEAM"),
+          sub().out("PRIMARY_TEAM"),
+          sub().out("MEMBER_OF").limit(1),
+        ])
         .values(["$id", "name"]),
     )
     .returning(["team"]);
@@ -297,7 +320,10 @@ function usersByStatus() {
 
 function totalRevenue() {
   return readBatch()
-    .varAs("revenue", g().nWithLabel("Order").aggregateBy(AggregateFunction.Sum, "price"))
+    .varAs(
+      "revenue",
+      g().nWithLabel("Order").aggregateBy(AggregateFunction.Sum, "price"),
+    )
     .returning(["revenue"]);
 }
 ```
@@ -348,7 +374,8 @@ function serviceTopology() {
       g()
         .nWithLabel("Service")
         .bind("service")
-        .out("ROUTES_TO").bind("pod")
+        .out("ROUTES_TO")
+        .bind("pod")
         .optional(sub().in("CREATES").bind("deployment"))
         .union([
           sub().in("MANAGES").bind("owner"),
@@ -357,10 +384,13 @@ function serviceTopology() {
         .projectDistinctBindings([
           BindingProjection.binding("service", "$id", "service_id"),
           BindingProjection.binding("pod", "name", "pod_name"),
-          BindingProjection.coalesce([
-            BindingProjection.bindingRef("deployment", "$id"),
-            BindingProjection.bindingRef("owner", "$id"),
-          ], "workload_id"),
+          BindingProjection.coalesce(
+            [
+              BindingProjection.bindingRef("deployment", "$id"),
+              BindingProjection.bindingRef("owner", "$id"),
+            ],
+            "workload_id",
+          ),
         ]),
     )
     .returning(["rows"]);
@@ -393,7 +423,12 @@ function createUserAndLinkPost(p = createUserParams) {
         })
         .project([PropertyProjection.renamed("$id", "id")]),
     )
-    .varAs("link", g().n(NodeRef.param("postId")).addE("CREATED_BY", NodeRef.var("newUser"), {}))
+    .varAs(
+      "link",
+      g()
+        .n(NodeRef.param("postId"))
+        .addE("CREATED_BY", NodeRef.var("newUser"), {}),
+    )
     .returning(["newUser", "link"]);
 }
 ```
@@ -403,20 +438,31 @@ function createUserAndLinkPost(p = createUserParams) {
 ## 13. Write: upsert via `varAsIf`
 
 ```ts
-const upsertParams = defineParams({ userId: param.string(), name: param.string() });
+const upsertParams = defineParams({
+  userId: param.string(),
+  name: param.string(),
+});
 
 function upsertUser(p = upsertParams) {
   return writeBatch()
-    .varAs("existing", g().nWithLabel("User").where(Predicate.eqParam("userId", "userId")))
+    .varAs(
+      "existing",
+      g().nWithLabel("User").where(Predicate.eqParam("userId", "userId")),
+    )
     .varAsIf(
       "updated",
       BatchCondition.varNotEmpty("existing"),
-      g().n(NodeRef.var("existing")).setProperty("name", PropertyInput.param("name")),
+      g()
+        .n(NodeRef.var("existing"))
+        .setProperty("name", PropertyInput.param("name")),
     )
     .varAsIf(
       "created",
       BatchCondition.varEmpty("existing"),
-      g().addN("User", { userId: PropertyInput.param("userId"), name: PropertyInput.param("name") }),
+      g().addN("User", {
+        userId: PropertyInput.param("userId"),
+        name: PropertyInput.param("name"),
+      }),
     )
     .returning(["updated", "created"]);
 }
@@ -427,7 +473,9 @@ function upsertUser(p = upsertParams) {
 ## 14. Write: `forEachParam` over an array of objects
 
 ```ts
-const bulkParams = defineParams({ data: param.array(param.object(param.value())) });
+const bulkParams = defineParams({
+  data: param.array(param.object(param.value())),
+});
 
 function bulkCreateUsers(p = bulkParams) {
   const body = writeBatch().varAs(
@@ -502,7 +550,12 @@ function usersFiltered(p = filteredParams) {
       "users",
       g()
         .nWithLabel("User")
-        .where(Predicate.and([Predicate.isInParam("status", "statuses"), Predicate.gteParam("createdAt", "since")]))
+        .where(
+          Predicate.and([
+            Predicate.isInParam("status", "statuses"),
+            Predicate.gteParam("createdAt", "since"),
+          ]),
+        )
         .values(["$id", "status", "createdAt"]),
     )
     .returning(["users"]);
@@ -525,7 +578,12 @@ millisecond precision before serializing.
 ```ts
 function bootstrapIndexes() {
   return writeBatch()
-    .varAs("idx_userId", g().createIndexIfNotExists(IndexSpec.nodeUniqueEquality("User", "userId")))
+    .varAs(
+      "idx_userId",
+      g().createIndexIfNotExists(
+        IndexSpec.nodeUniqueEquality("User", "userId"),
+      ),
+    )
     .varAs(
       "idx_embedding",
       g().createIndexIfNotExists(
@@ -538,7 +596,12 @@ function bootstrapIndexes() {
         ),
       ),
     )
-    .varAs("idx_body", g().createIndexIfNotExists(IndexSpec.nodeText("Document", "body", "tenantId")))
+    .varAs(
+      "idx_body",
+      g().createIndexIfNotExists(
+        IndexSpec.nodeText("Document", "body", "tenantId"),
+      ),
+    )
     .returning(["idx_userId", "idx_embedding", "idx_body"]);
 }
 ```
@@ -549,7 +612,7 @@ Drop an index with `g().dropIndex(IndexSpec....)`. The convenience methods (`cre
 
 ## 18. Warm a read route
 
-Warming uses the *same* query; `.warmOnly()` sets the `X-Helix-Warm: true` header on the client. Build the request and let callers decide to warm:
+Warming uses the _same_ query; `.warmOnly()` sets the `X-Helix-Warm: true` header on the client. Build the request and let callers decide to warm:
 
 ```ts
 import { Client } from "@helix-db/helix-db";
@@ -579,7 +642,11 @@ import { HelixError } from "@helix-db/helix-db";
 try {
   await client.query(request).send();
 } catch (cause) {
-  if (cause instanceof HelixError && cause.isConflict() && cause.code === "transaction_conflict") {
+  if (
+    cause instanceof HelixError &&
+    cause.isConflict() &&
+    cause.code === "transaction_conflict"
+  ) {
     // Reload state before rebuilding the write. Replay only if it is safe.
   } else {
     throw cause;

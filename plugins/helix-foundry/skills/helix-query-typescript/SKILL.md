@@ -78,7 +78,10 @@ A batch is a list of named query entries plus a returns list:
 ```ts
 readBatch()
   .varAs("user", g().nWhere(SourcePredicate.eq("username", "alice")))
-  .varAs("friends", g().n(NodeRef.var("user")).out("FOLLOWS").dedup().limit(100))
+  .varAs(
+    "friends",
+    g().n(NodeRef.var("user")).out("FOLLOWS").dedup().limit(100),
+  )
   .returning(["user", "friends"]);
 ```
 
@@ -141,7 +144,14 @@ const params = defineParams({ tenantId: param.string(), limit: param.i64() });
 
 function findUsers(p = params) {
   return readBatch()
-    .varAs("users", g().nWithLabel("User").where(Predicate.eqParam("tenantId", "tenantId")).limit(p.limit).valueMap(["$id", "name"]))
+    .varAs(
+      "users",
+      g()
+        .nWithLabel("User")
+        .where(Predicate.eqParam("tenantId", "tenantId"))
+        .limit(p.limit)
+        .valueMap(["$id", "name"]),
+    )
     .returning(["users"]);
 }
 ```
@@ -175,24 +185,24 @@ response.
 
 ## Builder Surface At A Glance
 
-| Category | Primary builders | Notes |
-|---|---|---|
-| Entry points | `g()`, `sub()`, `readBatch()`, `writeBatch()` | `g()` starts a `Traversal<"empty","read">`. |
-| Sources | `n`, `nWhere`, `nWithLabel`, `nWithLabelWhere`, `e`, `eWhere`, `eWithLabel`, `eWithLabelWhere`, `vectorSearchNodes[With]`, `textSearchNodes[With]`, `vectorSearchEdges[With]`, `textSearchEdges[With]` | Anchor narrowly. `*With` variants accept params/exprs. |
-| Traversal | `out`, `in`, `both`, `outE`, `inE`, `bothE`, `outN`, `inN`, `otherN`, `vectorSearch[With]`, `textSearch[With]` | Label arg is optional (`out("FOLLOWS")` or `out()`). `*E` switch to the edge stream. Traversal-scoped search ranks only current node/edge IDs. |
-| Filters | `has`, `hasLabel`, `hasKey`, `where`, `dedup`, `within`, `without`, `edgeHas`, `edgeHasLabel` | `Predicate.*` + `Predicate.*Param`; dotted paths like `metadata.externalID` are scan-only. |
-| Limits | `limit`, `skip`, `range` | Accept `number`, `bigint`, `Expr`, `ParamRef`, or `StreamBound`. |
-| Variables | `as`, `store`, `select`, `inject` | Cross-entry refs via `NodeRef.var/param`, `EdgeRef.var/param`. |
-| Ordering | `orderBy`, `orderByMultiple` | `Order.Asc` / `Order.Desc`. |
-| Aggregation | `count`, `exists`, `group`, `groupCount`, `aggregateBy` | `AggregateFunction.{Count,Sum,Min,Max,Mean}`. |
-| Branching | `union`, `choose`, `coalesce`, `optional` | Each arm is a `sub()` sub-traversal. |
-| Repeat | `repeat(RepeatConfig.new(sub).times(n).until(pred).emitAfter().maxDepth(100))` | Bound with `times`/`until`; default `maxDepth` 100. |
-| Projection | `values`, `valueMap`, `project`, `edgeProperties` | `project` mixes `PropertyProjection` (incl. `renamed`) and `ExprProjection`; filtered outputs accept dotted paths; edge streams can project endpoint fields with `Projection.fromEndpoint` / `Projection.toEndpoint`. |
-| Expressions | `Expr.prop/val/id/timestamp/datetime/param`, `.add/.sub/.mul/.div/.modulo/.neg`, `Expr.case` | `Expr.timestamp()` writes server UTC millis; `Expr.datetime()` writes typed datetime. |
-| Mutations | `addN`, `addE`, `setProperty`, `removeProperty`, `drop`, `dropEdge`, `dropEdgeLabeled`, `dropEdgeById` | `dropEdgeById` is multigraph-safe. |
-| Indexes | `createIndexIfNotExists(spec)`, `dropIndex(spec)`, plus `createVectorIndexNodes/Edges`, `createTextIndexNodes/Edges`; `IndexSpec.nodeEquality/nodeUniqueEquality/nodeRange/nodeRangeDesc/nodeRangeWithDirection/edgeEquality/edgeRange/edgeRangeDesc/edgeRangeWithDirection/nodeVector/nodeText/edgeVector/edgeText` | All write-only and top-level only for indexed properties. `RangeIndexDirection.Desc` sets descending physical order. |
-| Output | `toJsonString`, `toQueryJson`, `toQueryRequest`, `toQueryBytes` | Dynamic forms take `(params, values, options)` unless the query has no parameters; pass `{ queryName }` to set top-level `query_name`. |
-| Client / transport | `new Client(url)`, `Client.server(url)`, `.withApiKey`, `.query<R>(request)`, `.requestBuilder<R>()`, `.writerOnly`/`.warmOnly`/`.shouldAwaitDurability`, `.send()` | Direct requests use `POST /v2/query`; remote failures preserve HTTP status, code, message, structured details, and raw text; stored routes are not supported. |
+| Category           | Primary builders                                                                                                                                                                                                                                                                                                     | Notes                                                                                                                                                                                                                 |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Entry points       | `g()`, `sub()`, `readBatch()`, `writeBatch()`                                                                                                                                                                                                                                                                        | `g()` starts a `Traversal<"empty","read">`.                                                                                                                                                                           |
+| Sources            | `n`, `nWhere`, `nWithLabel`, `nWithLabelWhere`, `e`, `eWhere`, `eWithLabel`, `eWithLabelWhere`, `vectorSearchNodes[With]`, `textSearchNodes[With]`, `vectorSearchEdges[With]`, `textSearchEdges[With]`                                                                                                               | Anchor narrowly. `*With` variants accept params/exprs.                                                                                                                                                                |
+| Traversal          | `out`, `in`, `both`, `outE`, `inE`, `bothE`, `outN`, `inN`, `otherN`, `vectorSearch[With]`, `textSearch[With]`                                                                                                                                                                                                       | Label arg is optional (`out("FOLLOWS")` or `out()`). `*E` switch to the edge stream. Traversal-scoped search ranks only current node/edge IDs.                                                                        |
+| Filters            | `has`, `hasLabel`, `hasKey`, `where`, `dedup`, `within`, `without`, `edgeHas`, `edgeHasLabel`                                                                                                                                                                                                                        | `Predicate.*` + `Predicate.*Param`; dotted paths like `metadata.externalID` are scan-only.                                                                                                                            |
+| Limits             | `limit`, `skip`, `range`                                                                                                                                                                                                                                                                                             | Accept `number`, `bigint`, `Expr`, `ParamRef`, or `StreamBound`.                                                                                                                                                      |
+| Variables          | `as`, `store`, `select`, `inject`                                                                                                                                                                                                                                                                                    | Cross-entry refs via `NodeRef.var/param`, `EdgeRef.var/param`.                                                                                                                                                        |
+| Ordering           | `orderBy`, `orderByMultiple`                                                                                                                                                                                                                                                                                         | `Order.Asc` / `Order.Desc`.                                                                                                                                                                                           |
+| Aggregation        | `count`, `exists`, `group`, `groupCount`, `aggregateBy`                                                                                                                                                                                                                                                              | `AggregateFunction.{Count,Sum,Min,Max,Mean}`.                                                                                                                                                                         |
+| Branching          | `union`, `choose`, `coalesce`, `optional`                                                                                                                                                                                                                                                                            | Each arm is a `sub()` sub-traversal.                                                                                                                                                                                  |
+| Repeat             | `repeat(RepeatConfig.new(sub).times(n).until(pred).emitAfter().maxDepth(100))`                                                                                                                                                                                                                                       | Bound with `times`/`until`; default `maxDepth` 100.                                                                                                                                                                   |
+| Projection         | `values`, `valueMap`, `project`, `edgeProperties`                                                                                                                                                                                                                                                                    | `project` mixes `PropertyProjection` (incl. `renamed`) and `ExprProjection`; filtered outputs accept dotted paths; edge streams can project endpoint fields with `Projection.fromEndpoint` / `Projection.toEndpoint`. |
+| Expressions        | `Expr.prop/val/id/timestamp/datetime/param`, `.add/.sub/.mul/.div/.modulo/.neg`, `Expr.case`                                                                                                                                                                                                                         | `Expr.timestamp()` writes server UTC millis; `Expr.datetime()` writes typed datetime.                                                                                                                                 |
+| Mutations          | `addN`, `addE`, `setProperty`, `removeProperty`, `drop`, `dropEdge`, `dropEdgeLabeled`, `dropEdgeById`                                                                                                                                                                                                               | `dropEdgeById` is multigraph-safe.                                                                                                                                                                                    |
+| Indexes            | `createIndexIfNotExists(spec)`, `dropIndex(spec)`, plus `createVectorIndexNodes/Edges`, `createTextIndexNodes/Edges`; `IndexSpec.nodeEquality/nodeUniqueEquality/nodeRange/nodeRangeDesc/nodeRangeWithDirection/edgeEquality/edgeRange/edgeRangeDesc/edgeRangeWithDirection/nodeVector/nodeText/edgeVector/edgeText` | All write-only and top-level only for indexed properties. `RangeIndexDirection.Desc` sets descending physical order.                                                                                                  |
+| Output             | `toJsonString`, `toQueryJson`, `toQueryRequest`, `toQueryBytes`                                                                                                                                                                                                                                                      | Dynamic forms take `(params, values, options)` unless the query has no parameters; pass `{ queryName }` to set top-level `query_name`.                                                                                |
+| Client / transport | `new Client(url)`, `Client.server(url)`, `.withApiKey`, `.query<R>(request)`, `.requestBuilder<R>()`, `.writerOnly`/`.warmOnly`/`.shouldAwaitDurability`, `.send()`                                                                                                                                                  | Direct requests use `POST /v2/query`; remote failures preserve HTTP status, code, message, structured details, and raw text; stored routes are not supported.                                                         |
 
 See `REFERENCE.md` for full signatures and typestate constraints.
 
@@ -225,20 +235,31 @@ const body = userById().toQueryJson(params, { userId: "u-42" });
 ### Explicit Create Or Update
 
 ```ts
-const upsertParams = defineParams({ userId: param.string(), name: param.string() });
+const upsertParams = defineParams({
+  userId: param.string(),
+  name: param.string(),
+});
 
 function upsertUser(p = upsertParams) {
   return writeBatch()
-    .varAs("existing", g().nWithLabel("User").where(Predicate.eqParam("userId", "userId")))
+    .varAs(
+      "existing",
+      g().nWithLabel("User").where(Predicate.eqParam("userId", "userId")),
+    )
     .varAsIf(
       "updated",
       BatchCondition.varNotEmpty("existing"),
-      g().n(NodeRef.var("existing")).setProperty("name", PropertyInput.param("name")),
+      g()
+        .n(NodeRef.var("existing"))
+        .setProperty("name", PropertyInput.param("name")),
     )
     .varAsIf(
       "created",
       BatchCondition.varEmpty("existing"),
-      g().addN("User", { userId: PropertyInput.param("userId"), name: PropertyInput.param("name") }),
+      g().addN("User", {
+        userId: PropertyInput.param("userId"),
+        name: PropertyInput.param("name"),
+      }),
     )
     .returning(["updated", "created"]);
 }
@@ -247,14 +268,24 @@ function upsertUser(p = upsertParams) {
 ### Scoped Search Route
 
 ```ts
-const searchParams = defineParams({ tenantId: param.string(), queryVector: param.array(param.f32()), limit: param.i64() });
+const searchParams = defineParams({
+  tenantId: param.string(),
+  queryVector: param.array(param.f32()),
+  limit: param.i64(),
+});
 
 function nearestDocuments(p = searchParams) {
   return readBatch()
     .varAs(
       "results",
       g()
-        .vectorSearchNodesWith("Document", "embedding", PropertyInput.param("queryVector"), Expr.param("limit"), PropertyInput.param("tenantId"))
+        .vectorSearchNodesWith(
+          "Document",
+          "embedding",
+          PropertyInput.param("queryVector"),
+          Expr.param("limit"),
+          PropertyInput.param("tenantId"),
+        )
         .project([
           PropertyProjection.renamed("$id", "id"),
           PropertyProjection.new("title"),

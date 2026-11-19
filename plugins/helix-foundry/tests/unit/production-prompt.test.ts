@@ -35,9 +35,7 @@ describe("productionPrompt", () => {
         }),
       ).toContain(line);
     }
-    expect(text).toContain(
-      "`berry mcp add helix https://mcp.example.com/mcp`",
-    );
+    expect(text).toContain("`berry mcp add helix https://mcp.example.com/mcp`");
     expect(text).toContain(
       "`claude mcp add --transport http helix https://mcp.example.com/mcp`",
     );

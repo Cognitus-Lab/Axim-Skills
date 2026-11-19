@@ -63,14 +63,14 @@ Full spec, types, and index bootstrap are in `REFERENCE.md`.
 
 Pick the mechanism by the question you are answering, and combine them deliberately:
 
-| Need | Use | Why |
-|---|---|---|
-| Tenant isolation (`tenant_id`), exact identity, lifecycle flags (`deletedAt`, `expiresAt`, `validTo`, `isLatest`), ordering/filtering (`createdAt`, `salience`) | **Properties + equality/range index** | Narrow anchors and safe filters. Tenant scope is non-negotiable. |
-| Categorisation, entities, provenance, profile ownership, updates/extensions/derivations, association clusters, taxonomy | **Graph edges** | These are relationships; traverse and aggregate over them. |
-| Deduplication, paraphrase recall, memories like this, chunks like this | **Vector search** | Semantic similarity; tolerant of rewording. |
-| Exact names, ids, rare tokens, commands, file paths, product terms | **BM25 text search** | Embeddings blur exact tokens; BM25 preserves them. |
-| Broad user context the model should always know | **UserProfile node + summariser worker** | Avoid multiple searches for stable identity/preferences/recent focus. |
-| Raw documents and citations | **SourceDocument + Chunk nodes** | Memory facts are not a replacement for source-grounded RAG. |
+| Need                                                                                                                                                            | Use                                      | Why                                                                   |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- | --------------------------------------------------------------------- |
+| Tenant isolation (`tenant_id`), exact identity, lifecycle flags (`deletedAt`, `expiresAt`, `validTo`, `isLatest`), ordering/filtering (`createdAt`, `salience`) | **Properties + equality/range index**    | Narrow anchors and safe filters. Tenant scope is non-negotiable.      |
+| Categorisation, entities, provenance, profile ownership, updates/extensions/derivations, association clusters, taxonomy                                         | **Graph edges**                          | These are relationships; traverse and aggregate over them.            |
+| Deduplication, paraphrase recall, memories like this, chunks like this                                                                                          | **Vector search**                        | Semantic similarity; tolerant of rewording.                           |
+| Exact names, ids, rare tokens, commands, file paths, product terms                                                                                              | **BM25 text search**                     | Embeddings blur exact tokens; BM25 preserves them.                    |
+| Broad user context the model should always know                                                                                                                 | **UserProfile node + summariser worker** | Avoid multiple searches for stable identity/preferences/recent focus. |
+| Raw documents and citations                                                                                                                                     | **SourceDocument + Chunk nodes**         | Memory facts are not a replacement for source-grounded RAG.           |
 
 Rule of thumb: **never collapse a memory system to vector-only.** Vectors miss exact names and have no notion of ownership, recency, contradiction, provenance, profile state, or category.
 
@@ -80,18 +80,18 @@ Always scope vector/BM25 searches with `tenantValue = tenant_id`. Tenant scope i
 
 Helix gives you graph + search primitives. A full intelligent memory system also needs:
 
-| Layer | Responsibility |
-|---|---|
-| Ingestion API | Accept text, chats, files, URLs, connector events, and direct memory writes. |
-| Extractors | Convert PDFs, docs, HTML, images/OCR, audio/video transcripts, code, and structured data into text. |
-| Chunkers | Split raw context by semantic sections, message turns, document headings, code AST boundaries, or transcript segments. |
-| Embedding worker | Generate `text-embedding-3-small` 1536-dim `F32` embeddings for memories and chunks before writing to Helix, unless the app has explicitly standardised on another model. |
-| Memory generator | Extract atomic, entity-centric candidate facts from conversations/documents using the current turn plus recent context, active entities, recalled memories, and current date. |
-| Relationship classifier | Decide whether each candidate `UPDATES`, `EXTENDS`, `DERIVES`, duplicates, or stands alone. |
-| Profile summariser | Maintain `UserProfile.staticSummary` and `dynamicSummary` from latest memories. |
-| Forgetting jobs | Run expiry, decay, stale-profile, and connector deletion sweeps. |
-| Retrieval service | Rewrite queries, run vector + BM25 over memories/chunks, fuse, rerank, graph-expand, and pack context with citations. |
-| Evaluation | Measure recall quality, stale-memory suppression, tenant isolation, latency, and token efficiency. |
+| Layer                   | Responsibility                                                                                                                                                                |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Ingestion API           | Accept text, chats, files, URLs, connector events, and direct memory writes.                                                                                                  |
+| Extractors              | Convert PDFs, docs, HTML, images/OCR, audio/video transcripts, code, and structured data into text.                                                                           |
+| Chunkers                | Split raw context by semantic sections, message turns, document headings, code AST boundaries, or transcript segments.                                                        |
+| Embedding worker        | Generate `text-embedding-3-small` 1536-dim `F32` embeddings for memories and chunks before writing to Helix, unless the app has explicitly standardised on another model.     |
+| Memory generator        | Extract atomic, entity-centric candidate facts from conversations/documents using the current turn plus recent context, active entities, recalled memories, and current date. |
+| Relationship classifier | Decide whether each candidate `UPDATES`, `EXTENDS`, `DERIVES`, duplicates, or stands alone.                                                                                   |
+| Profile summariser      | Maintain `UserProfile.staticSummary` and `dynamicSummary` from latest memories.                                                                                               |
+| Forgetting jobs         | Run expiry, decay, stale-profile, and connector deletion sweeps.                                                                                                              |
+| Retrieval service       | Rewrite queries, run vector + BM25 over memories/chunks, fuse, rerank, graph-expand, and pack context with citations.                                                         |
+| Evaluation              | Measure recall quality, stale-memory suppression, tenant isolation, latency, and token efficiency.                                                                            |
 
 Do not imply Helix automatically does extraction, chunking, embedding, relationship classification, profile generation, connector sync, reranking, or TTL. Those are application responsibilities unless the user has a managed service that provides them.
 

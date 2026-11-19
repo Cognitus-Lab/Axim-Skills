@@ -121,28 +121,28 @@ only the website does, give them the matching link; don't build one.
 
 ## Pick the tool
 
-| The user wants | Use |
-| --- | --- |
-| What the ontology models: types, links, mappings, rules | `helix_foundry_get_version`, for the current version or another, such as a generation's draft |
-| Whether a version can be loaded | `helix_foundry_get_version`: its `load_refusal` |
-| Which sources feed the workspace, and when they last synced | `helix_foundry_list_connectors` (connectors, their synced tables and last sync) |
-| Which kinds of connector the workspace can add | `helix_foundry_list_connector_kinds` |
-| A connector's sync history and why a sync failed | `helix_foundry_list_syncs` |
-| How one sync is going | `helix_foundry_get_sync` |
-| To add a connector | `helix_foundry_connector_link`: give the user the link; they enter the credentials on the Foundry website |
-| An API source's fields, what waits to sync, how full it is, and its extraction this month | `helix_foundry_list_connectors`: its `event_source` |
-| To send pieces of data to an API source | `helix_foundry_send_pieces` (see API sources) |
-| An app or service without an MCP client to send pieces | the source's `send_url`, when a result returns one (see Send over HTTP) |
-| An ontology's documents, whether Helix has read each, and what loads made of them | `helix_foundry_list_documents`; `helix_foundry_get_ontology` lists the sets |
-| How a generation or a revision went, and a revision's findings | `helix_foundry_get_generation` |
-| How a load went, its jobs and why one failed | `helix_foundry_get_load` |
-| To show the user something on the website | the result's `url`, `explore_url` or `ask_url` (see Links) |
-| What reviews were already settled | `helix_foundry_list_review_decisions` |
-| Questions asked before, or the steps a question's agent took | `helix_foundry_list_questions`, `helix_foundry_list_question_events` |
-| Exact records, counts, groups or paths | `helix_foundry_read_guide`, then a `query` read |
-| Why a fact holds, or which rules break | an `explain`, `entity` or `violations` read |
-| Where a value came from | an `evidence` read |
-| An answer in plain language, with citations | `helix_foundry_ask` |
+| The user wants                                                                            | Use                                                                                                       |
+| ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| What the ontology models: types, links, mappings, rules                                   | `helix_foundry_get_version`, for the current version or another, such as a generation's draft             |
+| Whether a version can be loaded                                                           | `helix_foundry_get_version`: its `load_refusal`                                                           |
+| Which sources feed the workspace, and when they last synced                               | `helix_foundry_list_connectors` (connectors, their synced tables and last sync)                           |
+| Which kinds of connector the workspace can add                                            | `helix_foundry_list_connector_kinds`                                                                      |
+| A connector's sync history and why a sync failed                                          | `helix_foundry_list_syncs`                                                                                |
+| How one sync is going                                                                     | `helix_foundry_get_sync`                                                                                  |
+| To add a connector                                                                        | `helix_foundry_connector_link`: give the user the link; they enter the credentials on the Foundry website |
+| An API source's fields, what waits to sync, how full it is, and its extraction this month | `helix_foundry_list_connectors`: its `event_source`                                                       |
+| To send pieces of data to an API source                                                   | `helix_foundry_send_pieces` (see API sources)                                                             |
+| An app or service without an MCP client to send pieces                                    | the source's `send_url`, when a result returns one (see Send over HTTP)                                   |
+| An ontology's documents, whether Helix has read each, and what loads made of them         | `helix_foundry_list_documents`; `helix_foundry_get_ontology` lists the sets                               |
+| How a generation or a revision went, and a revision's findings                            | `helix_foundry_get_generation`                                                                            |
+| How a load went, its jobs and why one failed                                              | `helix_foundry_get_load`                                                                                  |
+| To show the user something on the website                                                 | the result's `url`, `explore_url` or `ask_url` (see Links)                                                |
+| What reviews were already settled                                                         | `helix_foundry_list_review_decisions`                                                                     |
+| Questions asked before, or the steps a question's agent took                              | `helix_foundry_list_questions`, `helix_foundry_list_question_events`                                      |
+| Exact records, counts, groups or paths                                                    | `helix_foundry_read_guide`, then a `query` read                                                           |
+| Why a fact holds, or which rules break                                                    | an `explain`, `entity` or `violations` read                                                               |
+| Where a value came from                                                                   | an `evidence` read                                                                                        |
+| An answer in plain language, with citations                                               | `helix_foundry_ask`                                                                                       |
 
 Prefer a graph read when you can state the question as one: it is exact, it costs
 nothing from the question budget, and you control the shape. Use Ask for open
@@ -235,11 +235,11 @@ generation or a revision, `helix_foundry_get_load` for a load. With `wait: true`
 call waits up to 25 seconds while the job runs; call again until it ends. Without
 `wait` it returns at once.
 
-| Job | Running | Ended |
-| --- | --- | --- |
-| Sync | `queued`, `running` | `succeeded`, `failed` |
-| Generation or revision | `queued`, `running` | `succeeded`, `failed` |
-| Load | `writing` | `ready`, `partial`, `failed` |
+| Job                    | Running             | Ended                        |
+| ---------------------- | ------------------- | ---------------------------- |
+| Sync                   | `queued`, `running` | `succeeded`, `failed`        |
+| Generation or revision | `queued`, `running` | `succeeded`, `failed`        |
+| Load                   | `writing`           | `ready`, `partial`, `failed` |
 
 A queued sync or generation with `attempts` above 0 is retrying after a failed
 attempt, and `next_attempt_at` says when it runs next: keep following it. A load
@@ -407,13 +407,13 @@ to know it ran.
 
 When a send fails:
 
-| Code | Do |
-| --- | --- |
-| `invalid_arguments` | Fix the piece the message names. If it says the `client_token` was already used, send with a new one |
-| `failed_precondition` | The source is full or paused, has all the fields it may have, or isn't an API source: stop and tell the user what it says. A paused source is resumed from its page in Foundry |
-| `resource_exhausted` | A send rate (by default about 5 sends a second per source and 20 per workspace) or the workspace's daily cap (200,000 pieces or 1 GiB a UTC day): wait as the message says, then retry with the same `client_token` |
-| `backend_unavailable` | Retry with the same `client_token` |
-| `not_found` | A wrong workspace or source, a source this caller can't send to, or not the send token's own: stop and tell the user |
+| Code                  | Do                                                                                                                                                                                                                  |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `invalid_arguments`   | Fix the piece the message names. If it says the `client_token` was already used, send with a new one                                                                                                                |
+| `failed_precondition` | The source is full or paused, has all the fields it may have, or isn't an API source: stop and tell the user what it says. A paused source is resumed from its page in Foundry                                      |
+| `resource_exhausted`  | A send rate (by default about 5 sends a second per source and 20 per workspace) or the workspace's daily cap (200,000 pieces or 1 GiB a UTC day): wait as the message says, then retry with the same `client_token` |
+| `backend_unavailable` | Retry with the same `client_token`                                                                                                                                                                                  |
+| `not_found`           | A wrong workspace or source, a source this caller can't send to, or not the send token's own: stop and tell the user                                                                                                |
 
 ### Entity extraction
 
@@ -519,7 +519,7 @@ status and `Retry-After`.
     {
       "id": "order-1042",
       "occurred_at": "2026-10-23T09:30:00Z",
-      "data": {"customer": "cus_91", "total": 42.5, "status": "paid"}
+      "data": { "customer": "cus_91", "total": 42.5, "status": "paid" }
     }
   ]
 }
@@ -552,19 +552,19 @@ send and counts toward the source's 200 for good.
   an `X-Request-ID` (the one you send, if it is 1 to 128 of `A-Za-z0-9._-`): give it
   when you report a problem.
 
-| Status | `code` | Do |
-| --- | --- | --- |
-| 200 | | Stored, or `replayed: true` for a send the source already holds |
-| 400 | `invalid_arguments` | Fix what the message says; `piece` is the refused piece's place in `pieces`, 1 for the first. A missing or bad `client_token` is refused here. If it says the `client_token` was already used with other pieces, send with a new one |
-| 401 | `unauthorized`, `invalid_token` | No bearer (`HELIX_EVENT_TOKEN` unset or empty), or a token that is malformed, wrong or revoked, or whose source was deleted: don't retry. Give the user `token_url` to make another |
-| 404 | `not_found` | The URL's source isn't the token's own, or no longer exists: stop and tell the user. A plain-text 404 is a wrong URL: use `send_url` as returned |
-| 405 | | Only POST is served |
-| 408 | `request_timeout` | The body took over 15 s to arrive: send it again with the same `client_token`, and fewer pieces a send if it keeps happening |
-| 409 | `failed_precondition` | `reason` `FOUNDRY_EVENT_SOURCE_FULL`, `FOUNDRY_EVENT_SOURCE_PAUSED` or `FOUNDRY_EVENT_SOURCE_FIELDS`: the source is full, paused or has all its fields. Stop and tell the user what it says |
-| 413 | `payload_too_large` | The body is over 2 MiB: split the pieces into smaller sends, each with a new `client_token` |
-| 415 | `unsupported_media_type` | Send JSON in UTF-8, uncompressed, with `Content-Type: application/json` |
-| 429 | `rate_limited`, `resource_exhausted` | Too many requests from the address or at once, too many failed tokens, or the source's or workspace's send rate or daily caps: wait the seconds `Retry-After` says, then retry with the same `client_token` |
-| 500, 502, 503, 504 | `internal`, `backend_unavailable`, or none | Wait a second, or as `Retry-After` says, then retry with the same `client_token`; after a few tries, waiting longer each time, stop and report it |
+| Status             | `code`                                     | Do                                                                                                                                                                                                                                   |
+| ------------------ | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 200                |                                            | Stored, or `replayed: true` for a send the source already holds                                                                                                                                                                      |
+| 400                | `invalid_arguments`                        | Fix what the message says; `piece` is the refused piece's place in `pieces`, 1 for the first. A missing or bad `client_token` is refused here. If it says the `client_token` was already used with other pieces, send with a new one |
+| 401                | `unauthorized`, `invalid_token`            | No bearer (`HELIX_EVENT_TOKEN` unset or empty), or a token that is malformed, wrong or revoked, or whose source was deleted: don't retry. Give the user `token_url` to make another                                                  |
+| 404                | `not_found`                                | The URL's source isn't the token's own, or no longer exists: stop and tell the user. A plain-text 404 is a wrong URL: use `send_url` as returned                                                                                     |
+| 405                |                                            | Only POST is served                                                                                                                                                                                                                  |
+| 408                | `request_timeout`                          | The body took over 15 s to arrive: send it again with the same `client_token`, and fewer pieces a send if it keeps happening                                                                                                         |
+| 409                | `failed_precondition`                      | `reason` `FOUNDRY_EVENT_SOURCE_FULL`, `FOUNDRY_EVENT_SOURCE_PAUSED` or `FOUNDRY_EVENT_SOURCE_FIELDS`: the source is full, paused or has all its fields. Stop and tell the user what it says                                          |
+| 413                | `payload_too_large`                        | The body is over 2 MiB: split the pieces into smaller sends, each with a new `client_token`                                                                                                                                          |
+| 415                | `unsupported_media_type`                   | Send JSON in UTF-8, uncompressed, with `Content-Type: application/json`                                                                                                                                                              |
+| 429                | `rate_limited`, `resource_exhausted`       | Too many requests from the address or at once, too many failed tokens, or the source's or workspace's send rate or daily caps: wait the seconds `Retry-After` says, then retry with the same `client_token`                          |
+| 500, 502, 503, 504 | `internal`, `backend_unavailable`, or none | Wait a second, or as `Retry-After` says, then retry with the same `client_token`; after a few tries, waiting longer each time, stop and report it                                                                                    |
 
 ## Permissions
 
@@ -587,14 +587,14 @@ send and counts toward the source's 200 for good.
 
 ## Errors
 
-| Code | Meaning |
-| --- | --- |
-| `not_found` | Missing, or not visible to this caller |
-| `invalid_arguments` | A malformed or out-of-contract argument; the message says what, so fix it from the read guide |
+| Code                  | Meaning                                                                                                                                                                                                                                              |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `not_found`           | Missing, or not visible to this caller                                                                                                                                                                                                               |
+| `invalid_arguments`   | A malformed or out-of-contract argument; the message says what, so fix it from the read guide                                                                                                                                                        |
 | `failed_precondition` | The state doesn't allow it: no current load, a load that can't be read or asked, a definition too large, the month's question budget is spent, cancelling a question that already ended, or an API source that is full, paused or has all its fields |
-| `resource_exhausted` | Too many or too large reads at once, the workspace's hourly question limit, or a send rate or daily send cap |
-| `backend_unavailable` | Helix couldn't be reached; try again shortly (a send, with the same `client_token`) |
-| `internal_error` | An unexpected failure; report it, don't loop |
+| `resource_exhausted`  | Too many or too large reads at once, the workspace's hourly question limit, or a send rate or daily send cap                                                                                                                                         |
+| `backend_unavailable` | Helix couldn't be reached; try again shortly (a send, with the same `client_token`)                                                                                                                                                                  |
+| `internal_error`      | An unexpected failure; report it, don't loop                                                                                                                                                                                                         |
 
 ## Trust boundary
 

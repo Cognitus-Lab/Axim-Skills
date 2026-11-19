@@ -73,10 +73,7 @@ g().n_with_label_where(
 ```
 
 ```ts
-g().nWithLabelWhere(
-  "User",
-  SourcePredicate.eq("status", "active"),
-)
+g().nWithLabelWhere("User", SourcePredicate.eq("status", "active"));
 ```
 
 `where` is still useful after a traversal, but starting broad and filtering later can
@@ -84,12 +81,12 @@ materialize more elements.
 
 ## 2. Match the index to the predicate
 
-| Workload | Index |
-|---|---|
-| equality and membership | node or edge equality |
-| range predicates and large ordered result sets | node or edge range |
-| nearest-neighbor search | node or edge vector |
-| full-text relevance | node or edge text |
+| Workload                                       | Index                 |
+| ---------------------------------------------- | --------------------- |
+| equality and membership                        | node or edge equality |
+| range predicates and large ordered result sets | node or edge range    |
+| nearest-neighbor search                        | node or edge vector   |
+| full-text relevance                            | node or edge text     |
 
 Do not expect an equality index to accelerate an arbitrary range, substring, or
 full-text query. Create indexes through a write request and wait for the returned DDL
@@ -166,7 +163,7 @@ g()
   .out("FOLLOWS")
   .dedup()
   .limit(25)
-  .valueMap(["$id", "name"])
+  .valueMap(["$id", "name"]);
 ```
 
 Avoid expanding a large subgraph, applying several broad filters, and limiting only

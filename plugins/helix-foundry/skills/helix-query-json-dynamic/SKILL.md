@@ -112,7 +112,7 @@ its message. Read
 The builder chain:
 
 ```ts
-g().nWithLabel("User").where(Predicate.eq("status", "active")).limit(25)
+g().nWithLabel("User").where(Predicate.eq("status", "active")).limit(25);
 ```
 
 serializes from the outside inward:
@@ -332,12 +332,12 @@ not part of the response.
 The planner changes only empty declared returns. Preserve populated response
 shapes exactly:
 
-| Semantic return | Populated | Empty or skipped |
-| --- | --- | --- |
-| At most one row, including a traversal bounded by `limit(1)` | Existing one-element array | `null` |
-| Collection with many or unknown cardinality | Existing array | `[]` |
-| `fold` or mutation | Existing array | `[]` |
-| Scalar terminal such as `count` or `exists` | Existing scalar, including `0` or `false` | No synthetic empty value |
+| Semantic return                                              | Populated                                 | Empty or skipped         |
+| ------------------------------------------------------------ | ----------------------------------------- | ------------------------ |
+| At most one row, including a traversal bounded by `limit(1)` | Existing one-element array                | `null`                   |
+| Collection with many or unknown cardinality                  | Existing array                            | `[]`                     |
+| `fold` or mutation                                           | Existing array                            | `[]`                     |
+| Scalar terminal such as `count` or `exists`                  | Existing scalar, including `0` or `false` | No synthetic empty value |
 
 An empty `returns` list produces `{}`. Do not normalize `null` to `[]` in a
 client: the distinction is the declared return's semantic cardinality.
