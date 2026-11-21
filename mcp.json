@@ -3,6 +3,10 @@
     "axim-skills": {
       "command": "python3",
       "args": ["mcp_server.py"]
+    },
+    "carla": {
+      "command": "python3",
+      "args": ["plugins/carla/mcp_server.py"]
     }
   }
 }

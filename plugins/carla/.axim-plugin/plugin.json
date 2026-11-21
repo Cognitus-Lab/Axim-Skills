@@ -1,0 +1,18 @@
+{
+  "name": "carla",
+  "description": "Vetted CARLA procedures (skills) for build, setup, Python API, ROS2, Scenic, ScenarioRunner, and Unreal 4/5/5.8 — bridged over MCP to the CARLA agentic-tools Node server.",
+  "version": "1.0.0",
+  "author": "Cognitus-Lab / carla-simulator",
+  "homepage": "https://github.com/carla-simulator/carla",
+  "license": "MIT",
+  "mcp": {
+    "server": "mcp_server.py",
+    "transport": "stdio",
+    "upstream": {
+      "command": "node",
+      "args": ["bin/carla-agentic-tools.js"],
+      "cwd": "__CARLA_AGENTIC_TOOLS__"
+    }
+  },
+  "skills_dir": "__CARLA_SKILLS__"
+}

@@ -189,6 +189,8 @@ def handle_tool_call(name: str, args: Dict[str, Any]) -> Any:
     # Route plugin tools directly if called
     if name.startswith("axim_scan"):
         return call_plugin_mcp("axim-scan", name, args)
+    if name.startswith("carla_"):
+        return call_plugin_mcp("carla", name, args)
     for p in ["bruno", "sql", "task-engine", "axim-scan"]:
         if name.startswith(f"{p}_") or name.startswith("sql_") or name.startswith("task_engine_"):
             return call_plugin_mcp(p, name, args)
