@@ -24,10 +24,20 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 PLUGIN_ROOT = Path(__file__).resolve().parent
-# plugins/carla -> plugins -> axim-skills. carla-src lives as a SIBLING of the
-# axim-skills repo, so the workspace root is one level above axim-skills.
-REPO_ROOT = PLUGIN_ROOT.parent.parent.parent.resolve()
-CARLA_SRC = REPO_ROOT / "carla-src"
+# Default: plugins/carla -> plugins -> axim-skills, so carla-src is a SIBLING of
+# the axim-skills repo (one level above it). Users with a non-standard CARLA
+# location can override this with the CARLA_SRC env var (absolute or $HOME-relative).
+def _resolve_carla_src() -> Path:
+    override = os.environ.get("CARLA_SRC", "").strip()
+    if override:
+        p = Path(override)
+        if not p.is_absolute():
+            p = Path.home() / override
+        return p.resolve()
+    repo_root = PLUGIN_ROOT.parent.parent.parent.resolve()
+    return repo_root / "carla-src"
+
+CARLA_SRC = _resolve_carla_src()
 AGENTIC_TOOLS = CARLA_SRC / "Util" / "AgenticTools"
 CARLA_SKILLS = CARLA_SRC / "Skills"
 
